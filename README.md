@@ -1,6 +1,6 @@
 # The library of Babel
 
-The library of Bebel contains every possible 410 page book with 40 lines per page and 80 characters per line, Using 29 characters (space, a-z, comma and period).
+The library of Babel contains every possible 410 page book with 40 lines per page and 80 characters per line, Using 29 characters (space, a-z, comma and period).
 Each book has a unique location (hexagon, wall, shelf, volume). The core algorithm converts text to location coordinates using base conversion.
 
 ## Context
