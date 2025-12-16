@@ -25,11 +25,11 @@ It's deterministic: the same text _always_ maps to the same location.
 
 ## Key components
 
-### Character Set:
+### Character Set
 
 - Only 29 characters: space + a-z + comma + period
 
-### Book Structure:
+### Book Structure
 
 - 410 pages per book
 - 40 lines per page
@@ -37,7 +37,7 @@ It's deterministic: the same text _always_ maps to the same location.
 - =3,200 characters per page
 - =1,312,000 characters per book
 
-### Location System:
+### Location System
 
 The library is organized hierarchically:
 
@@ -47,9 +47,22 @@ The library is organized hierarchically:
 - Volume: 32 books per shelf (0-31)
 - Page: 410 pages per book (1-410)
 
-### The core algorithm:
+### The Core Algorithm
 
 This is the mathematical magic
 
 - Text -> Number: Treat text as a base29 number
 - Number -> Location: Break that huge number into coordinates (hexagon, wall, shelf, volume, page)
+
+#### User Flows
+
+1. Search: User has text and wants to find its location
+
+- User has text and wants to find its location
+- Text -> `Base29Encode` -> `*big.Int`
+- Show the user the coordinates
+
+2. Browse: User has coordinates and wants to see what text is there
+
+- `Location` -> `LocationToBigInt` -> `*big.Int`
+- `*big.Int` -> `Base29Decode` -> `Text`

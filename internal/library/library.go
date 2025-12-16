@@ -9,21 +9,22 @@ import (
 )
 
 const (
-	PagesPerBook = 410
-	LinesPerPage = 40
-	CharsPerLine = 80
-	CharsPerPage = LinesPerPage * CharsPerLine // 3200
+	PagesPerBook    = 410
+	BooksPerShelf   = 32
+	ShelvesPerWall  = 5
+	WallsPerHexagon = 4
+	LinesPerPage    = 40
+	CharsPerLine    = 80
+	CharsPerPage    = LinesPerPage * CharsPerLine // 3200
 )
 
 type Location struct {
 	Hexagon string
 	Wall    int
 	Shelf   int
-	Volume  int
+	Book    int
 	Page    int
 }
-
-type Hexagon struct{}
 
 type Library struct {
 	charset     string
@@ -99,4 +100,68 @@ func (l Library) Base29Decode(n *big.Int) string {
 	slices.Reverse(runeSlice)
 
 	return string(runeSlice)
+}
+
+// Given a big int, get the Location
+func LocationFromBigInt(n *big.Int) *Location {
+	temp := new(big.Int).Abs(n)
+	quotient := new(big.Int)
+
+	// Get page
+	page := new(big.Int)
+	quotient, page = quotient.DivMod(temp, big.NewInt(PagesPerBook), page)
+	temp.Set(quotient)
+
+	// Get book
+	book := new(big.Int)
+	quotient, book = quotient.DivMod(temp, big.NewInt(BooksPerShelf), book)
+	temp.Set(quotient)
+
+	// Get shelf
+	shelf := new(big.Int)
+	quotient, shelf = quotient.DivMod(temp, big.NewInt(ShelvesPerWall), shelf)
+	temp.Set(quotient)
+
+	// Get wall
+	wall := new(big.Int)
+	quotient, wall = quotient.DivMod(temp, big.NewInt(WallsPerHexagon), wall)
+	temp.Set(quotient)
+
+	return &Location{
+		// Whatever is left from the quotient is the hexagon identifier
+		Hexagon: quotient.Text(36),
+		Wall:    int(wall.Int64()),
+		Shelf:   int(shelf.Int64()),
+		Book:    int(book.Int64()),
+		Page:    int(page.Int64()) + 1,
+	}
+}
+
+// Get Location from a big.Int
+func (l Location) BigIntFromLocation() (*big.Int, error) {
+	hexagon, ok := new(big.Int).SetString(l.Hexagon, 36)
+	if !ok {
+		return nil, errors.New("invalid hexagon string format")
+	}
+
+	// Build up from hexagon
+	result := new(big.Int).Set(hexagon)
+
+	// Add wall
+	result.Mul(result, big.NewInt(WallsPerHexagon))
+	result.Add(result, big.NewInt(int64(l.Wall)))
+
+	// Add shelf
+	result.Mul(result, big.NewInt(ShelvesPerWall))
+	result.Add(result, big.NewInt(int64(l.Shelf)))
+
+	// Add book
+	result.Mul(result, big.NewInt(BooksPerShelf))
+	result.Add(result, big.NewInt(int64(l.Book)))
+
+	// Add page
+	result.Mul(result, big.NewInt(PagesPerBook))
+	result.Add(result, big.NewInt(int64(l.Page)-1))
+
+	return result, nil
 }
