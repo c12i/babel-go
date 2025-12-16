@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"slices"
+	"strconv"
 	"strings"
 )
 
@@ -24,6 +25,68 @@ type Location struct {
 	Shelf   int
 	Book    int
 	Page    int
+}
+
+// Get Location from a period separated string: "<hexagon>.<wall>.<shelf>.<book>.<page>"
+func LocationFromString(address string) (*Location, error) {
+	parts := strings.Split(address, ".")
+	if partsLen := len(parts); partsLen != 5 {
+		return nil, fmt.Errorf("address is not of valid length, expected %d, got %d", 5, partsLen)
+	}
+
+	// Validate hexagon
+	hexagon := parts[0]
+	if _, ok := new(big.Int).SetString(hexagon, 36); !ok {
+		return nil, fmt.Errorf("invalid hexagon: must be valid base-36 string")
+	}
+
+	// Parse and validate numeric parts
+	wall, err := parseAndValidate(parts[1], "wall", 0, WallsPerHexagon-1)
+	if err != nil {
+		return nil, err
+	}
+
+	shelf, err := parseAndValidate(parts[2], "shelf", 0, ShelvesPerWall-1)
+	if err != nil {
+		return nil, err
+	}
+
+	book, err := parseAndValidate(parts[3], "book", 0, BooksPerShelf-1)
+	if err != nil {
+		return nil, err
+	}
+
+	page, err := parseAndValidate(parts[4], "page", 1, PagesPerBook)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Location{
+		Hexagon: hexagon,
+		Wall:    wall,
+		Shelf:   shelf,
+		Book:    book,
+		Page:    page,
+	}, nil
+}
+
+func parseAndValidate(s string, name string, min, max int) (int, error) {
+	val, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse %s: %v", name, err)
+	}
+	if val < min || val > max {
+		return 0, fmt.Errorf("%s must be between %d and %d, got %d", name, min, max, val)
+	}
+	return val, nil
+}
+
+func (l Location) Equals(other Location) bool {
+	return l.Hexagon == other.Hexagon &&
+		l.Wall == other.Wall &&
+		l.Shelf == other.Shelf &&
+		l.Book == other.Book &&
+		l.Page == other.Page
 }
 
 type Library struct {
