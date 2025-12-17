@@ -1,23 +1,70 @@
 package main
 
-import "github.com/alecthomas/kong"
+import (
+	"fmt"
+	"os"
+
+	"github.com/alecthomas/kong"
+	"github.com/c12i/babel-go/internal/library"
+)
 
 var CLI struct {
-	Search struct {
-		Text string `arg:"" name:"text" help:"Text to search in the library"`
-	} `cmd:"" help:"Search for text in the library of Babel"`
-	Browse struct {
-		Address string `arg:"" name:"address" help:"Period separated string of the address to browse in the library: <hexagon>.<wall>.<shelf>.<book>.<page>"`
-	} `cmd:"" help:"Browse a page of a book in the library given its address"`
+	Search SearchCmd `cmd:"" help:"Search for text in the library of Babel"`
+	Browse BrowseCmd `cmd:"" help:"Browse a page of a book in the library given its address"`
+}
+
+type Context struct {
+	Library *library.Library
+}
+
+type SearchCmd struct {
+	Text string `arg:"" name:"text" help:"Text to search in the library"`
+}
+
+func (s *SearchCmd) Run(ctx *Context) error {
+	base29Encoded, err := ctx.Library.Base29Encode(s.Text)
+	if err != nil {
+		return err
+	}
+	location := library.LocationFromBigInt(base29Encoded)
+	fmt.Printf("Found at:\n")
+	fmt.Printf("  Hexagon: %s\n", location.Hexagon)
+	fmt.Printf("  Wall:    %d\n", location.Wall)
+	fmt.Printf("  Shelf:   %d\n", location.Shelf)
+	fmt.Printf("  Book:    %d\n", location.Book)
+	fmt.Printf("  Page:    %d\n", location.Page)
+	return nil
+}
+
+type BrowseCmd struct {
+	Address string `arg:"" name:"address" help:"Period separated string of the address to browse in the library: <hexagon>.<wall>.<shelf>.<book>.<page>"`
+}
+
+func (b *BrowseCmd) Run(ctx *Context) error {
+	location, err := library.LocationFromString(b.Address)
+	if err != nil {
+		return err
+	}
+	base29Number, err := location.BigIntFromLocation()
+	if err != nil {
+		return err
+	}
+	pageContent := ctx.Library.Base29Decode(base29Number)
+	fmt.Printf("%s", pageContent)
+	fmt.Printf("%d", len(pageContent))
+	return nil
 }
 
 func main() {
-	ctx := kong.Parse(&CLI)
-
-	switch ctx.Command() {
-	case "search <text>":
-	case "browse <address>":
-	default:
-		panic(ctx.Command())
+	ctx := kong.Parse(
+		&CLI,
+		kong.Name("babel"),
+		kong.Description("Library of Babel CLI - Search and browse the infinite library"),
+		kong.UsageOnError(),
+	)
+	err := ctx.Run(&Context{Library: library.NewLibrary()})
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
 	}
 }
