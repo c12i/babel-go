@@ -66,3 +66,25 @@ This is the mathematical magic
 
 - `Location` -> `LocationToBigInt` -> `*big.Int`
 - `*big.Int` -> `Base29Decode` -> `Text`
+
+### Autogenerating Text
+
+Deterministically generating the full 3200 characters of a page based on a Location's coordinates
+
+#### How it works
+
+The key principle: **Deterministic Randomness**
+
+Use the location coordinates as a seed for pseudo-random generation:
+
+- Same location -> Always same "random" content
+- Different location -> different content
+- No storage needed - can be generated on the fly
+
+#### The algorithm
+
+- Convert location to a seed number
+- Initialize random generator with that seed number
+- Generate 3200 random indices (0 - 28)
+- Map indices to characters
+- Result -> deterministic random page

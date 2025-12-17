@@ -10,13 +10,13 @@ import (
 )
 
 const (
-	PagesPerBook    = 410
-	BooksPerShelf   = 32
-	ShelvesPerWall  = 5
-	WallsPerHexagon = 4
-	LinesPerPage    = 40
-	CharsPerLine    = 80
-	CharsPerPage    = LinesPerPage * CharsPerLine // 3200
+	pagesPerBook    = 410
+	booksPerShelf   = 32
+	shelvesPerWall  = 5
+	wallsPerHexagon = 4
+	linesPerPage    = 40
+	charsPerLine    = 80
+	charsPerPage    = linesPerPage * charsPerLine // 3200
 )
 
 type Location struct {
@@ -41,22 +41,22 @@ func LocationFromString(address string) (*Location, error) {
 	}
 
 	// Parse and validate numeric parts
-	wall, err := parseAndValidate(parts[1], "wall", 0, WallsPerHexagon-1)
+	wall, err := parseAndValidate(parts[1], "wall", 0, wallsPerHexagon-1)
 	if err != nil {
 		return nil, err
 	}
 
-	shelf, err := parseAndValidate(parts[2], "shelf", 0, ShelvesPerWall-1)
+	shelf, err := parseAndValidate(parts[2], "shelf", 0, shelvesPerWall-1)
 	if err != nil {
 		return nil, err
 	}
 
-	book, err := parseAndValidate(parts[3], "book", 0, BooksPerShelf-1)
+	book, err := parseAndValidate(parts[3], "book", 0, booksPerShelf-1)
 	if err != nil {
 		return nil, err
 	}
 
-	page, err := parseAndValidate(parts[4], "page", 1, PagesPerBook)
+	page, err := parseAndValidate(parts[4], "page", 1, pagesPerBook)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (l Library) Base29Encode(text string) (*big.Int, error) {
 		return nil, errors.New("text should not be empty")
 	}
 
-	if len(text) > CharsPerPage {
+	if len(text) > charsPerPage {
 		return nil, errors.New("text exceeds 3200 character limit")
 	}
 
@@ -127,7 +127,7 @@ func (l Library) Base29Encode(text string) (*big.Int, error) {
 	// XXX: Final implementation will need the text padded with random characters
 	var builder strings.Builder
 	builder.WriteString(text)
-	for range CharsPerPage - len(text) {
+	for range charsPerPage - len(text) {
 		builder.WriteRune(' ')
 	}
 
@@ -148,21 +148,18 @@ func (l Library) Base29Encode(text string) (*big.Int, error) {
 // Convert base29 number back to a string
 func (l Library) Base29Decode(n *big.Int) string {
 	temp := new(big.Int).Abs(n)
-	quotient := new(big.Int)
-	remainder := new(big.Int)
-
-	runeSlice := []rune{}
+	quotient, remainder := new(big.Int), new(big.Int)
+	runes := []rune{}
 
 	for temp.Sign() > 0 {
 		quotient, remainder = quotient.DivMod(temp, l.base, remainder)
 		charByte := l.charset[remainder.Int64()]
-		runeSlice = append(runeSlice, rune(charByte))
+		runes = append(runes, rune(charByte))
 		temp.Set(quotient)
 	}
+	slices.Reverse(runes)
 
-	slices.Reverse(runeSlice)
-
-	return string(runeSlice)
+	return string(runes)
 }
 
 // Given a big int, get the Location
@@ -172,22 +169,22 @@ func LocationFromBigInt(n *big.Int) *Location {
 
 	// Get page
 	page := new(big.Int)
-	quotient, page = quotient.DivMod(temp, big.NewInt(PagesPerBook), page)
+	quotient, page = quotient.DivMod(temp, big.NewInt(pagesPerBook), page)
 	temp.Set(quotient)
 
 	// Get book
 	book := new(big.Int)
-	quotient, book = quotient.DivMod(temp, big.NewInt(BooksPerShelf), book)
+	quotient, book = quotient.DivMod(temp, big.NewInt(booksPerShelf), book)
 	temp.Set(quotient)
 
 	// Get shelf
 	shelf := new(big.Int)
-	quotient, shelf = quotient.DivMod(temp, big.NewInt(ShelvesPerWall), shelf)
+	quotient, shelf = quotient.DivMod(temp, big.NewInt(shelvesPerWall), shelf)
 	temp.Set(quotient)
 
 	// Get wall
 	wall := new(big.Int)
-	quotient, wall = quotient.DivMod(temp, big.NewInt(WallsPerHexagon), wall)
+	quotient, wall = quotient.DivMod(temp, big.NewInt(wallsPerHexagon), wall)
 	temp.Set(quotient)
 
 	return &Location{
@@ -211,19 +208,19 @@ func (l Location) BigIntFromLocation() (*big.Int, error) {
 	result := new(big.Int).Set(hexagon)
 
 	// Add wall
-	result.Mul(result, big.NewInt(WallsPerHexagon))
+	result.Mul(result, big.NewInt(wallsPerHexagon))
 	result.Add(result, big.NewInt(int64(l.Wall)))
 
 	// Add shelf
-	result.Mul(result, big.NewInt(ShelvesPerWall))
+	result.Mul(result, big.NewInt(shelvesPerWall))
 	result.Add(result, big.NewInt(int64(l.Shelf)))
 
 	// Add book
-	result.Mul(result, big.NewInt(BooksPerShelf))
+	result.Mul(result, big.NewInt(booksPerShelf))
 	result.Add(result, big.NewInt(int64(l.Book)))
 
 	// Add page
-	result.Mul(result, big.NewInt(PagesPerBook))
+	result.Mul(result, big.NewInt(pagesPerBook))
 	result.Add(result, big.NewInt(int64(l.Page)-1))
 
 	return result, nil
