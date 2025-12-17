@@ -40,21 +40,23 @@ type BrowseCmd struct {
 	Address string `arg:"" name:"address" help:"Period separated string of the address to browse in the library: <hexagon>.<wall>.<shelf>.<book>.<page>"`
 }
 
-func (b *BrowseCmd) Run(ctx *Context) error {
-	location, err := library.LocationFromString(b.Address)
+func (s *BrowseCmd) Run(ctx *Context) error {
+	location, err := library.LocationFromString(s.Address)
 	if err != nil {
 		return err
 	}
+
 	base29Number, err := location.BigIntFromLocation()
 	if err != nil {
 		return err
 	}
+
+	// Decode the actual encoded content
 	pageContent := ctx.Library.Base29Decode(base29Number)
+
 	fmt.Printf("%s", pageContent)
-	fmt.Printf("%d", len(pageContent))
 	return nil
 }
-
 func main() {
 	ctx := kong.Parse(
 		&CLI,
