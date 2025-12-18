@@ -57,6 +57,7 @@ func (s *BrowseCmd) Run(ctx *Context) error {
 	fmt.Printf("%s", pageContent)
 	return nil
 }
+
 func main() {
 	ctx := kong.Parse(
 		&CLI,
