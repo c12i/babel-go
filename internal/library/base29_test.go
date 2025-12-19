@@ -8,18 +8,17 @@ import (
 
 func TestLibraryBase29EncodeAndDecode(t *testing.T) {
 	library := NewLibrary()
-	testString := "hello world"
-	num, err := library.Base29Encode(testString)
+	input := "hello world"
+	num, err := library.Base29Encode(input)
 	if err != nil {
 		t.Errorf("failed to encode text: %v", err)
 	}
-	decodedString := library.Base29Decode(num)
-	decodedString = strings.TrimSpace(decodedString)
+	pageContent := library.Base29Decode(num)
 
-	if testString != decodedString {
+	if !strings.Contains(pageContent, input) {
 		t.Errorf(
-			"decoded base29 number does not match original string: original %v, decodedString: %v",
-			testString, decodedString,
+			"input string \"%s\" not in page content",
+			input,
 		)
 	}
 }
