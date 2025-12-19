@@ -22,11 +22,10 @@ type SearchCmd struct {
 }
 
 func (s *SearchCmd) Run(ctx *Context) error {
-	base29Encoded, err := ctx.Library.Base29Encode(s.Text)
+	location, err := ctx.Library.Search(s.Text)
 	if err != nil {
 		return err
 	}
-	location := library.LocationFromBigInt(base29Encoded)
 	fmt.Printf("Found at:\n")
 	fmt.Printf("  Hexagon: %s\n", location.Hexagon)
 	fmt.Printf("  Wall:    %d\n", location.Wall)
@@ -45,15 +44,10 @@ func (s *BrowseCmd) Run(ctx *Context) error {
 	if err != nil {
 		return err
 	}
-
-	base29Number, err := location.BigIntFromLocation()
+	pageContent, err := ctx.Library.Browse(location)
 	if err != nil {
 		return err
 	}
-
-	// Decode the actual encoded content
-	pageContent := ctx.Library.Base29Decode(base29Number)
-
 	fmt.Printf("%s", pageContent)
 	return nil
 }
