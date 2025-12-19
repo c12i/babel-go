@@ -17,7 +17,10 @@ func TestLibraryBase29EncodeAndDecode(t *testing.T) {
 	decodedString = strings.TrimSpace(decodedString)
 
 	if testString != decodedString {
-		t.Errorf("decoded base29 number does not match original string: original %v, decodedString: %v", testString, decodedString)
+		t.Errorf(
+			"decoded base29 number does not match original string: original %v, decodedString: %v",
+			testString, decodedString,
+		)
 	}
 }
 

@@ -117,7 +117,7 @@ func (l Location) generateSeed() int64 {
 	bytes := []byte(l.String())
 	hashBytes := sha256.Sum256(bytes)
 	// Get int64 from first 8 bytes of hashed location
-	seed := int64(binary.BigEndian.Uint64(hashBytes[:8]))
+	seed := int64(binary.BigEndian.Uint64(hashBytes[:8])) //nolint:gosec // overflow acceptable
 	return seed
 }
 
@@ -173,7 +173,9 @@ func (l Library) Base29Encode(text string) (*big.Int, error) {
 		index, exists := l.charToIndex[char]
 
 		if !exists {
-			return nil, fmt.Errorf("text contains invalid characters, supported charset: %v", l.charset)
+			return nil, fmt.Errorf(
+				"text contains invalid characters, supported charset: %v", l.charset,
+			)
 		}
 
 		result.Add(result, big.NewInt(int64(index)))
@@ -186,8 +188,8 @@ func (l Library) Base29Encode(text string) (*big.Int, error) {
 // The text will appear in the page, the same seed is used to populate the page contents
 func (l Library) seedPageChars(text string) string {
 	textHash := sha256.Sum256([]byte(strings.ToLower(text)))
-	textSeed := int64(binary.BigEndian.Uint64(textHash[:8]))
-	rng := rand.New(rand.NewSource(textSeed))
+	textSeed := int64(binary.BigEndian.Uint64(textHash[:8])) //nolint:gosec // overflow acceptable
+	rng := rand.New(rand.NewSource(textSeed))                //nolint:gosec // crypto not needed
 
 	// Generate position from seeded rng
 	maxPosition := charsPerPage - len(text)
@@ -257,7 +259,7 @@ func LocationFromBigInt(n *big.Int) *Location {
 
 func (l *Library) GeneratePageContent(location Location) string {
 	seed := location.generateSeed()
-	rng := rand.New(rand.NewSource(seed))
+	rng := rand.New(rand.NewSource(seed)) //nolint:gosec // crypt/rand not needed
 
 	b := make([]byte, charsPerPage)
 	for i := range b {

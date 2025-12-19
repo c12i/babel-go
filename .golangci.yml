@@ -1,1 +1,52 @@
 version: "2"
+
+run:
+  timeout: 3m
+  tests: true
+
+linters:
+  enable:
+    # essential checks
+    - govet # Go's built-in analyzer
+    - errcheck # Check unchecked errors
+    - staticcheck # Advanced static analysis
+    - unused # Detect unused code
+    - ineffassign # Ineffectual assignments
+    # style & maintainability
+    - misspell # Spelling errors
+    - goconst # Repeated strings
+    - dupl # Code duplication
+    - gocyclo # Cyclomatic complexity
+    # Security
+    - gosec # Security Issues
+    # Code quality
+    - unparam # Unused parameters
+    - unconvert # Unnecessary conversions
+    - wastedassign # Wasted assignments
+
+  disable:
+    # essential checks
+    - exhaustruct
+    - varnamelen
+    - wrapcheck
+    - nlreturn
+    - wsl
+    - wsl_v5
+
+  exclusions:
+    generated: lax
+    rules:
+      - path: _test\.go
+        linters:
+          - errcheck
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+    - gofumpt
+    - golines
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

@@ -15,7 +15,13 @@ func TestLocationFromValidString(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to create location from: %v", location)
 	}
-	expectedLocation := Location{Hexagon: big.NewInt(0).Text(36), Wall: 2, Shelf: 1, Book: 12, Page: 30}
+	expectedLocation := Location{
+		Hexagon: big.NewInt(0).Text(36),
+		Wall:    2,
+		Shelf:   1,
+		Book:    12,
+		Page:    30,
+	}
 	if !location.Equals(expectedLocation) {
 		t.Errorf("got %+v, want %+v", location, expectedLocation)
 	}
@@ -23,13 +29,17 @@ func TestLocationFromValidString(t *testing.T) {
 
 func TestLocationFromLongAndShortAddressStrings(t *testing.T) {
 	// Too short
-	_, err := LocationFromString(fmt.Sprintf("%s.2.1", big.NewInt(0).Text(36))) // missing book and page
+	_, err := LocationFromString(
+		fmt.Sprintf("%s.2.1", big.NewInt(0).Text(36)),
+	) // missing book and page
 	if err == nil {
 		t.Errorf("got nil, expected err")
 	}
 
 	// Too long
-	_, err2 := LocationFromString(fmt.Sprintf("%s.2.1.12.30.34.39.29", big.NewInt(0).Text(36))) // missing book and page
+	_, err2 := LocationFromString(
+		fmt.Sprintf("%s.2.1.12.30.34.39.29", big.NewInt(0).Text(36)),
+	) // missing book and page
 	if err2 == nil {
 		t.Errorf("got nil, expected err")
 	}
