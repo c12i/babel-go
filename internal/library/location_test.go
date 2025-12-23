@@ -65,7 +65,7 @@ func TestLocationFromStringWithInvalidWallValue(t *testing.T) {
 	}
 
 	// Too small
-	_, err2 := LocationFromString(fmt.Sprintf("%s.30.1.12.30", big.NewInt(0).Text(36)))
+	_, err2 := LocationFromString(fmt.Sprintf("%s.-30.1.12.30", big.NewInt(0).Text(36)))
 	if err2 == nil {
 		t.Errorf("got nil, expected err")
 	}
