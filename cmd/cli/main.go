@@ -19,8 +19,8 @@ type Context struct {
 
 type SearchCmd struct {
 	Text   string `arg:"" help:"Text to search for"`
-	Offset int    `help:"Starting position" default:"0"`
-	Limit  int    `help:"Number of results" default:"10"`
+	Offset int    `arg:"" help:"Starting position"  default:"0"`
+	Limit  int    `arg:"" help:"Number of results"  default:"10"`
 }
 
 func (s *SearchCmd) Run(ctx *Context) error {

@@ -47,6 +47,7 @@ func NewLibrary() *Library {
 	}
 }
 
+// Deprecated: Search is deprecated. Use SearchStream or SearchPaginated instead.
 func (l Library) Search(text string) (*Location, error) {
 	bigInt, err := l.generateBase29BigInt(text, 0)
 	if err != nil {
