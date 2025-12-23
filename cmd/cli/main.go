@@ -18,20 +18,27 @@ type Context struct {
 }
 
 type SearchCmd struct {
-	Text string `arg:"" name:"text" help:"Text to search in the library"`
+	Text   string `arg:"" help:"Text to search for"`
+	Offset int    `arg:"" help:"Starting position"  default:"0"`
+	Limit  int    `arg:"" help:"Number of results"  default:"10"`
 }
 
 func (s *SearchCmd) Run(ctx *Context) error {
-	location, err := ctx.Library.Search(s.Text)
+	lib := ctx.Library
+
+	totalCount := lib.GetOccurrenceCount(s.Text)
+	locations, err := lib.SearchPaginated(s.Text, s.Offset, s.Limit)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Found at:\n")
-	fmt.Printf("  Hexagon: %s\n", location.Hexagon)
-	fmt.Printf("  Wall:    %d\n", location.Wall)
-	fmt.Printf("  Shelf:   %d\n", location.Shelf)
-	fmt.Printf("  Book:    %d\n", location.Book)
-	fmt.Printf("  Page:    %d\n", location.Page)
+
+	fmt.Printf("Text '%s' appears in %d locations. Showing %d results starting from %d:\n\n",
+		s.Text, totalCount, len(locations), s.Offset+1)
+
+	for i, location := range locations {
+		fmt.Printf("  %d. %s\n", s.Offset+i+1, location.String())
+	}
+
 	return nil
 }
 

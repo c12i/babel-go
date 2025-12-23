@@ -5,11 +5,14 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"math"
 	"math/big"
 	"math/rand"
+	"runtime"
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 const (
@@ -44,13 +47,107 @@ func NewLibrary() *Library {
 	}
 }
 
+// Deprecated: Search is deprecated. Use SearchStream or SearchPaginated instead.
 func (l Library) Search(text string) (*Location, error) {
-	bigInt, err := l.base29Encode(text)
+	bigInt, err := l.generateBase29BigInt(text, 0)
 	if err != nil {
 		return nil, err
 	}
-	location := locationFromBigInt(bigInt)
+	location := locationFromBase29BigInt(bigInt)
 	return location, nil
+}
+
+func (l Library) SearchStream(text string) (<-chan *Location, error) {
+	totalCount := l.GetOccurrenceCount(text)
+	// location and job worker channel
+	locationChan, workerChan := make(chan *Location, 100), make(chan int, 100)
+	// start fixed number of workers
+	numWorkers := runtime.NumCPU()
+	var wg sync.WaitGroup
+
+	for range numWorkers {
+		wg.Go(func() {
+			defer wg.Done()
+			// each worker processes multiple variants
+			for variant := range workerChan {
+				bigInt, err := l.generateBase29BigInt(text, variant)
+				if err != nil {
+					continue
+				}
+				location := locationFromBase29BigInt(bigInt)
+				locationChan <- location
+			}
+		})
+	}
+
+	// send jobs and close channels
+	go func() {
+		defer close(workerChan)
+		for variant := 0; variant < totalCount; variant++ {
+			workerChan <- variant
+		}
+	}()
+
+	// close results when workers finish
+	go func() {
+		defer close(locationChan)
+		wg.Wait()
+	}()
+
+	return locationChan, nil
+}
+
+func (l Library) SearchPaginated(text string, offset, limit int) ([]*Location, error) {
+	totalCount := l.GetOccurrenceCount(text)
+
+	// Validate parameters
+	if offset < 0 {
+		return nil, errors.New("offset cannot be negative")
+	}
+	if limit <= 0 {
+		return nil, errors.New("limit must be positive")
+	}
+	if offset >= totalCount {
+		return []*Location{}, nil
+	}
+
+	// calculate actual results to return
+	endIndex := min(offset+limit, totalCount)
+	actualLimit := endIndex - offset
+
+	locations := make([]*Location, 0, actualLimit)
+
+	// generate locations from offset to endIndex
+	for variant := offset; variant < endIndex; variant++ {
+		bigInt, err := l.generateBase29BigInt(text, variant)
+		if err != nil {
+			return nil, fmt.Errorf("error generating location for variant %d: %w", variant, err)
+		}
+
+		location := locationFromBase29BigInt(bigInt)
+		locations = append(locations, location)
+	}
+
+	return locations, nil
+}
+
+// Deterministically determine the occurrence rate of a given text in the library
+// using exponential decay
+func (l Library) GetOccurrenceCount(text string) int {
+	textLen := len(text)
+
+	// decay initial max count exponentially by length
+	maxCount := 100_000_000 // 100M for single characters
+	baseCount := maxCount / int(math.Pow(2, float64(textLen-1)))
+
+	hash := sha256.Sum256([]byte(strings.ToLower(text)))
+	seed := int64(binary.BigEndian.Uint64(hash[:8])) //nolint:gosec
+	rng := rand.New(rand.NewSource(seed))            //nolint:gosec
+
+	variation := baseCount / 4 // ±25% variation
+	adjustment := rng.Intn(2*variation) - variation
+
+	return max(1, baseCount+adjustment)
 }
 
 func (l Library) Browse(location *Location) (string, error) {
@@ -58,22 +155,21 @@ func (l Library) Browse(location *Location) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	pageContent := l.base29Decode(bigInt)
+	pageContent := l.getStringFromBase29BigInt(bigInt)
 	return pageContent, nil
 }
 
 // Converts a given text into a base29 number.
-func (l Library) base29Encode(text string) (*big.Int, error) {
+func (l Library) generateBase29BigInt(text string, variant int) (*big.Int, error) {
 	if text == "" {
 		return nil, errors.New("text should not be empty")
 	}
-
 	if len(text) > charsPerPage {
 		return nil, errors.New("text exceeds 3200 character limit")
 	}
 
 	result := big.NewInt(0)
-	pageChars := l.seedPageChars(text)
+	pageChars := l.seedPageChars(text, variant)
 
 	for _, char := range pageChars {
 		result.Mul(result, l.base)
@@ -93,8 +189,9 @@ func (l Library) base29Encode(text string) (*big.Int, error) {
 
 // A deterministic seed based on the hash of the input text is used to generate the position
 // The text will appear in the page, the same seed is used to populate the page contents
-func (l Library) seedPageChars(text string) string {
-	textHash := sha256.Sum256([]byte(strings.ToLower(text)))
+func (l Library) seedPageChars(text string, variant int) string {
+	input := fmt.Sprintf("%s\x00%d", strings.ToLower(text), variant)
+	textHash := sha256.Sum256([]byte(input))
 	textSeed := int64(binary.BigEndian.Uint64(textHash[:8])) //nolint:gosec // overflow acceptable
 	rng := rand.New(rand.NewSource(textSeed))                //nolint:gosec // crypto not needed
 
@@ -114,7 +211,7 @@ func (l Library) seedPageChars(text string) string {
 }
 
 // Convert base29 number back to a string
-func (l Library) base29Decode(n *big.Int) string {
+func (l Library) getStringFromBase29BigInt(n *big.Int) string {
 	temp := new(big.Int).Abs(n)
 	quotient, remainder := new(big.Int), new(big.Int)
 	runes := []rune{}
@@ -182,7 +279,7 @@ func LocationFromString(address string) (*Location, error) {
 }
 
 // Determine a Location's given its big Int representation
-func locationFromBigInt(n *big.Int) *Location {
+func locationFromBase29BigInt(n *big.Int) *Location {
 	temp, quotient := new(big.Int).Abs(n), new(big.Int)
 
 	// Get page
