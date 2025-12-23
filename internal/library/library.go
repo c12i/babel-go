@@ -68,7 +68,6 @@ func (l Library) SearchStream(text string) (<-chan *Location, error) {
 
 	for range numWorkers {
 		wg.Go(func() {
-			defer wg.Done()
 			// each worker processes multiple variants
 			for variant := range workerChan {
 				bigInt, err := l.generateBase29BigInt(text, variant)
