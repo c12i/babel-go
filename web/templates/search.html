@@ -1,0 +1,66 @@
+{{ define "content" }}
+<div class="max-w-4xl mx-auto">
+  <div class="bg-ink/50 border border-aged/20 rounded p-8 mb-8">
+    <h1 class="text-xs tracking-[0.3em] text-aged/60 uppercase mb-6">Search</h1>
+
+    {{ if .error }}
+    <div
+      class="bg-red-900/20 border border-red-900/50 text-red-400 p-4 mb-6 text-sm"
+    >
+      {{ .error }}
+    </div>
+    {{ end }}
+
+    <form action="/search" method="POST" class="space-y-4">
+      <textarea
+        name="text"
+        rows="6"
+        maxlength="3200"
+        placeholder="Enter text to search..."
+        class="w-full bg-ink/80 border border-aged/30 rounded px-4 py-3 text-parchment font-mono text-sm focus:outline-none focus:border-aged/60 transition-colors placeholder-aged/30"
+      >
+{{ .query }}</textarea
+      >
+
+      <button
+        type="submit"
+        class="w-full bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-6 py-3 rounded transition-all tracking-widest text-sm uppercase"
+      >
+        Search
+      </button>
+    </form>
+  </div>
+
+  {{ if .locations }}
+  <div class="space-y-6">
+    <div class="text-center py-6">
+      <p class="text-aged/60 text-sm">
+        <span class="text-aged text-2xl font-light">{{ .total }}</span>
+      </p>
+      <p class="text-aged/40 text-xs tracking-widest uppercase mt-2">
+        occurrences found
+      </p>
+    </div>
+
+    <div class="space-y-2">
+      <p class="text-aged/50 text-xs tracking-widest uppercase mb-4">
+        Locations (showing first {{ len .locations }})
+      </p>
+
+      {{ range .locations }}
+      <div
+        class="bg-ink/30 border border-aged/10 hover:border-aged/30 transition-colors"
+      >
+        <form action="/browse" method="POST" class="w-full">
+          <input type="hidden" name="location" value="{{ .String }}" />
+          <button type="submit" class="location-link px-4 py-3 text-xs">
+            {{ .String }}
+          </button>
+        </form>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+  {{ end }}
+</div>
+{{ end }}
