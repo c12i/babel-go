@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ .title }} - Library of Babel</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              parchment: "#f4f1e8",
+              ink: "#1a1a1a",
+              aged: "#c9b99b",
+            },
+            fontFamily: {
+              mono: ["Courier New", "Courier", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer components {
+        .location-link {
+          @apply bg-transparent border-0 text-aged font-mono p-0 cursor-pointer text-left hover:text-amber-600 transition-colors w-full;
+        }
+
+        .page-content {
+          @apply font-mono text-sm leading-loose tracking-wide whitespace-pre-wrap break-words;
+        }
+      }
+
+      body {
+        background: linear-gradient(to bottom, #0a0a0a 0%, #1a1a1a 100%);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-parchment font-mono">
+    <!-- Subtle header -->
+    <header class="border-b border-aged/20 py-6">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between">
+          <a
+            href="/"
+            class="text-2xl tracking-widest text-aged hover:text-amber-600 transition-colors"
+          >
+            THE LIBRARY
+          </a>
+          <nav class="flex gap-8 text-sm tracking-wider">
+            <a
+              href="/search"
+              class="text-aged/80 hover:text-aged transition-colors"
+              >SEARCH</a
+            >
+            <a
+              href="/browse"
+              class="text-aged/80 hover:text-aged transition-colors"
+              >BROWSE</a
+            >
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">{{ template "content" . }}</main>
+
+    <footer class="mt-24 pb-8 text-center text-aged/40 text-xs tracking-widest">
+      <p>∞</p>
+      <p class="mt-2">EVERY BOOK THAT HAS BEEN WRITTEN</p>
+      <p>EVERY BOOK THAT WILL BE WRITTEN</p>
+      <p class="mt-2">ALL EXIST HERE</p>
+    </footer>
+  </body>
+</html>
