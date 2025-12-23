@@ -1,57 +1,150 @@
-{{ define "content" }}
-<div class="max-w-3xl mx-auto">
-  <div class="text-center mb-16 space-y-4">
-    <h1 class="text-sm tracking-[0.3em] text-aged/60 uppercase">
-      Library of Babel
-    </h1>
-    <p class="text-aged/70 italic text-sm leading-relaxed max-w-2xl mx-auto">
-      "The universe (which others call the Library) is composed of an indefinite
-      and perhaps infinite number of hexagonal galleries..."
-    </p>
-    <p class="text-aged/40 text-xs">— Jorge Luis Borges</p>
-  </div>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ .title }} - Library of Babel</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
 
-  <div class="bg-ink/50 border border-aged/20 rounded p-8">
-    <form action="/search" method="POST" class="space-y-6">
-      <div>
-        <label
-          for="text"
-          class="block text-aged/60 text-xs tracking-widest uppercase mb-3"
-        >
-          Search the infinite
-        </label>
-        <textarea
-          name="text"
-          id="text"
-          rows="6"
-          maxlength="3200"
-          placeholder="Enter any text... it already exists somewhere in the Library"
-          class="w-full bg-ink/80 border border-aged/30 rounded px-4 py-3 text-parchment font-mono text-sm focus:outline-none focus:border-aged/60 transition-colors placeholder-aged/30"
-          autofocus
-        ></textarea>
-        <p class="mt-2 text-aged/40 text-xs">Maximum 3,200 characters</p>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              parchment: "#f4f1e8",
+              ink: "#1a1a1a",
+              aged: "#c9b99b",
+            },
+            fontFamily: {
+              mono: ["Courier New", "Courier", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer components {
+        .location-link {
+          @apply bg-transparent border-0 text-aged font-mono p-0 cursor-pointer text-left hover:text-amber-600 transition-colors w-full;
+        }
+
+        .page-content {
+          @apply font-mono text-sm leading-loose tracking-wide whitespace-pre-wrap break-words;
+        }
+      }
+
+      body {
+        background: linear-gradient(to bottom, #0a0a0a 0%, #1a1a1a 100%);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-parchment font-mono">
+    <!-- Subtle header -->
+    <header class="border-b border-aged/20 py-6">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between">
+          <a
+            href="/"
+            class="text-2xl tracking-widest text-aged hover:text-amber-600 transition-colors"
+          >
+            THE LIBRARY
+          </a>
+          <nav class="flex gap-8 text-sm tracking-wider">
+            <a
+              href="/search"
+              class="text-aged/80 hover:text-aged transition-colors"
+              >SEARCH</a
+            >
+            <a
+              href="/browse"
+              class="text-aged/80 hover:text-aged transition-colors"
+              >BROWSE</a
+            >
+          </nav>
+        </div>
       </div>
+    </header>
 
-      <button
-        type="submit"
-        class="w-full bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-6 py-3 rounded transition-all tracking-widest text-sm uppercase"
-      >
-        Locate in Library
-      </button>
-    </form>
-  </div>
+    <main class="container mx-auto px-4 py-12">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-16 space-y-4">
+          <h1 class="text-sm tracking-[0.3em] text-aged/60 uppercase">
+            Library of Babel
+          </h1>
+          <p
+            class="text-aged/70 italic text-sm leading-relaxed max-w-2xl mx-auto"
+          >
+            "The universe (which others call the Library) is composed of an
+            indefinite and perhaps infinite number of hexagonal galleries..."
+          </p>
+          <p class="text-aged/40 text-xs">— Jorge Luis Borges</p>
+        </div>
 
-  <div class="mt-12 text-center space-y-3 text-aged/50 text-sm leading-relaxed">
-    <p>The Library contains 29 symbols:</p>
-    <p class="font-mono text-aged/70">
-      a b c d e f g h i j k l m n o p q r s t u v w x y z , . [space]
-    </p>
-    <p class="mt-6 text-xs italic">
-      3,200 characters per page • 410 pages per book
-    </p>
-    <p class="text-xs italic">
-      32 books per shelf • 5 shelves per wall • 4 walls per hexagon
-    </p>
-  </div>
-</div>
-{{ end }}
+        <div class="bg-ink/50 border border-aged/20 rounded p-8">
+          <form action="/search" method="POST" class="space-y-6">
+            <div>
+              <label
+                for="text"
+                class="block text-aged/60 text-xs tracking-widest uppercase mb-3"
+              >
+                Search the infinite
+              </label>
+              <textarea
+                name="text"
+                id="text"
+                rows="6"
+                maxlength="3200"
+                placeholder="Enter any text... it already exists somewhere in the Library"
+                class="w-full bg-ink/80 border border-aged/30 rounded px-4 py-3 text-parchment font-mono text-sm focus:outline-none focus:border-aged/60 transition-colors placeholder-aged/30"
+                autofocus
+              ></textarea>
+              <p class="mt-2 text-aged/40 text-xs">Maximum 3,200 characters</p>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-6 py-3 rounded transition-all tracking-widest text-sm uppercase"
+            >
+              Locate in Library
+            </button>
+          </form>
+        </div>
+
+        <div
+          class="mt-12 text-center space-y-3 text-aged/50 text-sm leading-relaxed"
+        >
+          <p>The Library contains 29 symbols:</p>
+          <p class="font-mono text-aged/70">
+            a b c d e f g h i j k l m n o p q r s t u v w x y z , . [space]
+          </p>
+          <p class="mt-6 text-xs italic">
+            3,200 characters per page • 410 pages per book
+          </p>
+          <p class="text-xs italic">
+            32 books per shelf • 5 shelves per wall • 4 walls per hexagon
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="mt-24 pb-8 text-center text-aged/40 text-xs tracking-widest">
+      <p>∞</p>
+      <p class="mt-2">EVERY BOOK THAT HAS BEEN WRITTEN</p>
+      <p>EVERY BOOK THAT WILL BE WRITTEN</p>
+      <p class="mt-2">ALL EXIST HERE</p>
+      <p class="mt-6">
+        <a
+          href="https://github.com/c12i/babel-go"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-aged/60 hover:text-aged transition-colors"
+        >
+          View on GitHub
+        </a>
+      </p>
+    </footer>
+  </body>
+</html>

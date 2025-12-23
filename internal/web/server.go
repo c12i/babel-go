@@ -19,8 +19,20 @@ func NewServer(handler *Handler, logger *log.Logger) *Server {
 	router := gin.New()
 	router.Use(gin.Recovery())
 
-	router.LoadHTMLGlob("web/templates/*")
-	router.SetHTMLTemplate(template.Must(template.ParseGlob("web/templates/*.html")))
+	// set custom template functions
+	router.SetFuncMap(template.FuncMap{
+		"add": func(a, b int) int {
+			return a + b
+		},
+		"sub": func(a, b int) int {
+			return a - b
+		},
+	})
+
+	router.LoadHTMLGlob("web/templates/*.html")
+
+	// serve static files
+	router.Static("/static", "./web/static")
 
 	// healthcheck
 	router.GET("/health", func(ctx *gin.Context) {
@@ -31,6 +43,7 @@ func NewServer(handler *Handler, logger *log.Logger) *Server {
 	router.GET("/", handler.Home)
 	router.GET("/search", handler.SearchForm)
 	router.POST("/search", handler.SearchPost)
+	router.GET("/browse", handler.BrowseForm)
 	router.POST("/browse", handler.Browse)
 
 	return &Server{

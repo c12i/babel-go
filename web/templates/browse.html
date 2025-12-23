@@ -1,109 +1,268 @@
-{{ define "content" }}
-<div class="max-w-5xl mx-auto">
-  {{ if .error }}
-  <div
-    class="bg-red-900/20 border border-red-900/50 text-red-400 p-4 mb-8 text-sm max-w-3xl mx-auto"
-  >
-    {{ .error }}
-  </div>
-  {{ end }}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ .title }} - Library of Babel</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
 
-  <!-- Manual location entry -->
-  {{ if not .location }}
-  <div class="max-w-3xl mx-auto">
-    <div class="bg-ink/50 border border-aged/20 rounded p-8">
-      <h1 class="text-xs tracking-[0.3em] text-aged/60 uppercase mb-6">
-        Navigate to Location
-      </h1>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-      <form action="/browse" method="POST" class="space-y-4">
-        <div>
-          <label
-            for="location"
-            class="block text-aged/50 text-xs tracking-wider mb-2"
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              parchment: "#f4f1e8",
+              ink: "#1a1a1a",
+              aged: "#c9b99b",
+            },
+            fontFamily: {
+              mono: ["Courier New", "Courier", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer components {
+        .location-link {
+          @apply bg-transparent border-0 text-aged font-mono p-0 cursor-pointer text-left hover:text-amber-600 transition-colors w-full;
+        }
+
+        .page-content {
+          @apply font-mono text-sm leading-loose tracking-wide whitespace-pre break-words;
+          display: block;
+          margin: 0 auto;
+          width: fit-content;
+        }
+      }
+
+      body {
+        background: linear-gradient(to bottom, #0a0a0a 0%, #1a1a1a 100%);
+      }
+
+      mark {
+        padding: 2px 4px;
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-parchment font-mono">
+    <!-- Subtle header -->
+    <header class="border-b border-aged/20 py-6">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between">
+          <a
+            href="/"
+            class="text-2xl tracking-widest text-aged hover:text-amber-600 transition-colors"
           >
-            HEXAGON.WALL.SHELF.BOOK.PAGE
-          </label>
-          <input
-            type="text"
-            name="location"
-            id="location"
-            placeholder="e.g., 3a7f.2.1.15.204"
-            class="w-full bg-ink/80 border border-aged/30 rounded px-4 py-3 text-parchment font-mono text-sm focus:outline-none focus:border-aged/60 transition-colors placeholder-aged/30"
-            autofocus
-          />
+            THE LIBRARY
+          </a>
+          <nav class="flex gap-8 text-sm tracking-wider">
+            <a
+              href="/search"
+              class="text-aged/80 hover:text-aged transition-colors"
+              >SEARCH</a
+            >
+            <a
+              href="/browse"
+              class="text-aged/80 hover:text-aged transition-colors"
+              >BROWSE</a
+            >
+          </nav>
         </div>
-        <button
-          type="submit"
-          class="w-full bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-6 py-3 rounded transition-all tracking-widest text-sm uppercase"
+      </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+      <div class="max-w-5xl mx-auto">
+        {{ if .error }}
+        <div
+          class="bg-red-900/20 border border-red-900/50 text-red-400 p-4 mb-8 text-sm max-w-3xl mx-auto"
         >
-          Navigate
-        </button>
-      </form>
-    </div>
-  </div>
-  {{ end }} {{ if .location }}
-  <div class="space-y-6">
-    <div class="bg-ink/50 border border-aged/20 rounded p-6">
-      <p class="text-aged/40 text-xs tracking-widest uppercase mb-3">
-        Location
-      </p>
-      <p class="font-mono text-aged text-sm mb-4 break-all">
-        {{ .location.String }}
-      </p>
+          {{ .error }}
+        </div>
+        {{ end }}
 
-      <div class="grid grid-cols-5 gap-4 text-xs pt-4 border-t border-aged/10">
-        <div>
-          <span class="text-aged/40 block mb-1">Hexagon</span>
-          <span class="font-mono text-aged/80">{{ .location.Hexagon }}</span>
+        <!-- manual location entry -->
+        {{ if not .location }}
+        <div class="max-w-3xl mx-auto">
+          <div class="bg-ink/50 border border-aged/20 rounded p-8">
+            <h1 class="text-xs tracking-[0.3em] text-aged/60 uppercase mb-6">
+              Navigate to Location
+            </h1>
+
+            <form action="/browse" method="POST" class="space-y-4">
+              <div>
+                <label
+                  for="location"
+                  class="block text-aged/50 text-xs tracking-wider mb-2"
+                >
+                  HEXAGON.WALL.SHELF.BOOK.PAGE
+                </label>
+                <input
+                  type="text"
+                  name="location"
+                  id="location"
+                  placeholder="e.g., 3a7f.2.1.15.204"
+                  class="w-full bg-ink/80 border border-aged/30 rounded px-4 py-3 text-parchment font-mono text-sm focus:outline-none focus:border-aged/60 transition-colors placeholder-aged/30"
+                  autofocus
+                />
+              </div>
+              <button
+                type="submit"
+                class="w-full bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-6 py-3 rounded transition-all tracking-widest text-sm uppercase"
+              >
+                Navigate
+              </button>
+            </form>
+          </div>
         </div>
-        <div>
-          <span class="text-aged/40 block mb-1">Wall</span>
-          <span class="font-mono text-aged/80">{{ .location.Wall }}</span>
+        {{ end }} {{ if .location }}
+        <div class="space-y-6">
+          <div class="bg-ink/50 border border-aged/20 rounded p-6">
+            <div class="flex items-center justify-between mb-4">
+              <p class="text-aged/40 text-xs tracking-widest uppercase">
+                Location
+              </p>
+              <button
+                onclick="copyLocation()"
+                id="copyBtn"
+                class="bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-3 py-1 rounded transition-all text-xs tracking-wider uppercase"
+              >
+                Copy
+              </button>
+            </div>
+            <p
+              id="locationText"
+              class="font-mono text-aged text-sm mb-4 break-all truncate"
+              title="{{ .location.String }}"
+            >
+              {{ .location.String }}
+            </p>
+
+            <div
+              class="grid grid-cols-5 gap-4 text-xs pt-4 border-t border-aged/10"
+            >
+              <div>
+                <span class="text-aged/40 block mb-1">Hexagon</span>
+                <span
+                  class="font-mono text-aged/80 truncate block max-w-[120px]"
+                  title="{{ .location.Hexagon }}"
+                  >{{ .location.Hexagon }}</span
+                >
+              </div>
+              <div>
+                <span class="text-aged/40 block mb-1">Wall</span>
+                <span class="font-mono text-aged/80">{{ .location.Wall }}</span>
+              </div>
+              <div>
+                <span class="text-aged/40 block mb-1">Shelf</span>
+                <span class="font-mono text-aged/80"
+                  >{{ .location.Shelf }}</span
+                >
+              </div>
+              <div>
+                <span class="text-aged/40 block mb-1">Book</span>
+                <span class="font-mono text-aged/80">{{ .location.Book }}</span>
+              </div>
+              <div>
+                <span class="text-aged/40 block mb-1">Page</span>
+                <span class="font-mono text-aged/80">{{ .location.Page }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-ink/70 border border-aged/30 rounded p-8 shadow-2xl">
+            <div class="mb-4 pb-4 border-b border-aged/20">
+              <p class="text-aged/40 text-xs tracking-widest uppercase">
+                Page {{ .location.Page }}
+              </p>
+            </div>
+
+            <div class="bg-parchment/5 rounded p-6">
+              <pre class="page-content text-parchment/90">
+{{ .displayContent }}</pre
+              >
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center pt-4">
+            <a
+              href="/search"
+              class="text-aged/60 hover:text-aged transition-colors text-sm tracking-wider"
+            >
+              ← Return to Search
+            </a>
+
+            <a
+              href="/"
+              class="text-aged/60 hover:text-aged transition-colors text-sm tracking-wider"
+            >
+              Return to Library Entrance
+            </a>
+          </div>
         </div>
-        <div>
-          <span class="text-aged/40 block mb-1">Shelf</span>
-          <span class="font-mono text-aged/80">{{ .location.Shelf }}</span>
-        </div>
-        <div>
-          <span class="text-aged/40 block mb-1">Book</span>
-          <span class="font-mono text-aged/80">{{ .location.Book }}</span>
-        </div>
-        <div>
-          <span class="text-aged/40 block mb-1">Page</span>
-          <span class="font-mono text-aged/80">{{ .location.Page }}</span>
-        </div>
+        {{ end }}
       </div>
-    </div>
+    </main>
 
-    <div class="bg-ink/70 border border-aged/30 rounded p-8 shadow-2xl">
-      <div class="mb-4 pb-4 border-b border-aged/20">
-        <p class="text-aged/40 text-xs tracking-widest uppercase">
-          Page {{ .location.Page }}
-        </p>
-      </div>
+    <footer class="mt-24 pb-8 text-center text-aged/40 text-xs tracking-widest">
+      <p>∞</p>
+      <p class="mt-2">EVERY BOOK THAT HAS BEEN WRITTEN</p>
+      <p>EVERY BOOK THAT WILL BE WRITTEN</p>
+      <p class="mt-2">ALL EXIST HERE</p>
+    </footer>
 
-      <div class="bg-parchment/5 rounded p-6">
-        <pre class="page-content text-parchment/90">{{ .content }}</pre>
-      </div>
-    </div>
+    <script>
+      function copyLocation() {
+        const locationText = document
+          .getElementById("locationText")
+          .textContent.trim();
+        const copyBtn = document.getElementById("copyBtn");
 
-    <div class="flex justify-between items-center pt-4">
-      <a
-        href="/search"
-        class="text-aged/60 hover:text-aged transition-colors text-sm tracking-wider"
-      >
-        ← Return to Search
-      </a>
+        navigator.clipboard
+          .writeText(locationText)
+          .then(() => {
+            // Show success feedback
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = "Copied!";
+            copyBtn.classList.add(
+              "bg-green-600/20",
+              "border-green-600/50",
+              "text-green-400",
+            );
+            copyBtn.classList.remove(
+              "bg-aged/10",
+              "border-aged/30",
+              "text-aged",
+            );
 
-      <a
-        href="/"
-        class="text-aged/60 hover:text-aged transition-colors text-sm tracking-wider"
-      >
-        Return to Library Entrance
-      </a>
-    </div>
-  </div>
-  {{ end }}
-</div>
-{{ end }}
+            // Reset after 2 seconds
+            setTimeout(() => {
+              copyBtn.textContent = originalText;
+              copyBtn.classList.remove(
+                "bg-green-600/20",
+                "border-green-600/50",
+                "text-green-400",
+              );
+              copyBtn.classList.add(
+                "bg-aged/10",
+                "border-aged/30",
+                "text-aged",
+              );
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Failed to copy:", err);
+            copyBtn.textContent = "Failed";
+            setTimeout(() => {
+              copyBtn.textContent = "Copy";
+            }, 2000);
+          });
+      }
+    </script>
+  </body>
+</html>
