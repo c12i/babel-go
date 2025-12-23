@@ -120,13 +120,13 @@ func TestLocationFromStringWithInvalidPageValue(t *testing.T) {
 func TestGetLocationFromBigInt(t *testing.T) {
 	library := NewLibrary()
 
-	originalNum, err := library.generateBase29BigInt("Hello world", 0)
+	originalNum, err := library.generateBase29Number("Hello world", 0)
 	if err != nil {
 		t.Errorf("failed to base29 encode: %v", err)
 	}
 
-	location := locationFromBase29BigInt(originalNum)
-	number, err := location.GetBigInt()
+	location := locationFromBase29Number(originalNum)
+	number, err := location.ToBigInt()
 	if err != nil {
 		t.Errorf("location to big.Int conversion failed: %v", err)
 	}
@@ -138,13 +138,13 @@ func TestGetLocationFromBigInt(t *testing.T) {
 
 func TestGetLocationWithInvalidHexagonString(t *testing.T) {
 	library := NewLibrary()
-	number, err := library.generateBase29BigInt("Hello world", 0)
+	number, err := library.generateBase29Number("Hello world", 0)
 	if err != nil {
 		t.Errorf("failed to base29 encode: %v", err)
 	}
-	location := locationFromBase29BigInt(number)
+	location := locationFromBase29Number(number)
 	location.Hexagon = "invalid base32 string"
-	_, err2 := location.GetBigInt()
+	_, err2 := location.ToBigInt()
 	if err2 == nil {
 		t.Errorf("invalid base32 string succeeded when it was expected to fail: %v", err2)
 	}

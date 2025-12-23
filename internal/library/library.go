@@ -50,11 +50,11 @@ func NewLibrary() *Library {
 
 // Deprecated: Search is deprecated. Use SearchStream or SearchPaginated instead.
 func (l Library) Search(text string) (*Location, error) {
-	bigInt, err := l.generateBase29BigInt(text, 0)
+	bigInt, err := l.generateBase29Number(text, 0)
 	if err != nil {
 		return nil, err
 	}
-	location := locationFromBase29BigInt(bigInt)
+	location := locationFromBase29Number(bigInt)
 	return location, nil
 }
 
@@ -70,11 +70,11 @@ func (l Library) SearchStream(text string) (<-chan *Location, error) {
 		wg.Go(func() {
 			// each worker processes multiple variants
 			for variant := range workerChan {
-				bigInt, err := l.generateBase29BigInt(text, variant)
+				bigInt, err := l.generateBase29Number(text, variant)
 				if err != nil {
 					continue
 				}
-				location := locationFromBase29BigInt(bigInt)
+				location := locationFromBase29Number(bigInt)
 				locationChan <- location
 			}
 		})
@@ -119,12 +119,12 @@ func (l Library) SearchPaginated(text string, offset, limit int) ([]*Location, e
 
 	// generate locations from offset to endIndex
 	for variant := offset; variant < endIndex; variant++ {
-		bigInt, err := l.generateBase29BigInt(text, variant)
+		bigInt, err := l.generateBase29Number(text, variant)
 		if err != nil {
 			return nil, fmt.Errorf("error generating location for variant %d: %w", variant, err)
 		}
 
-		location := locationFromBase29BigInt(bigInt)
+		location := locationFromBase29Number(bigInt)
 		locations = append(locations, location)
 	}
 
@@ -153,16 +153,16 @@ func (l Library) GetOccurrenceCount(text string) int {
 }
 
 func (l Library) Browse(location *Location) (string, error) {
-	bigInt, err := location.GetBigInt()
+	bigInt, err := location.ToBigInt()
 	if err != nil {
 		return "", err
 	}
-	pageContent := l.getStringFromBase29BigInt(bigInt)
+	pageContent := l.base29NumberToString(bigInt)
 	return pageContent, nil
 }
 
 // Converts a given text into a base29 number.
-func (l Library) generateBase29BigInt(text string, variant int) (*big.Int, error) {
+func (l Library) generateBase29Number(text string, variant int) (*big.Int, error) {
 	if text == "" {
 		return nil, errors.New("text should not be empty")
 	}
@@ -213,7 +213,7 @@ func (l Library) seedPageChars(text string, variant int) string {
 }
 
 // Convert base29 number back to a string
-func (l Library) getStringFromBase29BigInt(n *big.Int) string {
+func (l Library) base29NumberToString(n *big.Int) string {
 	temp := new(big.Int).Abs(n)
 	quotient, remainder := new(big.Int), new(big.Int)
 	runes := []rune{}
@@ -281,7 +281,7 @@ func LocationFromString(address string) (*Location, error) {
 }
 
 // Determine a Location's given its big Int representation
-func locationFromBase29BigInt(n *big.Int) *Location {
+func locationFromBase29Number(n *big.Int) *Location {
 	temp, quotient := new(big.Int).Abs(n), new(big.Int)
 
 	// Get page
@@ -326,7 +326,7 @@ func parseAndValidate(s string, name string, min, max int) (int, error) {
 }
 
 // Get Location from a big.Int
-func (l Location) GetBigInt() (*big.Int, error) {
+func (l Location) ToBigInt() (*big.Int, error) {
 	hexagon, ok := new(big.Int).SetString(l.Hexagon, 36)
 	if !ok {
 		return nil, errors.New("invalid hexagon string format")
