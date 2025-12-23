@@ -16,13 +16,14 @@ import (
 )
 
 const (
-	pagesPerBook    = 410
-	booksPerShelf   = 32
-	shelvesPerWall  = 5
-	wallsPerHexagon = 4
-	linesPerPage    = 40
-	charsPerLine    = 80
-	charsPerPage    = linesPerPage * charsPerLine // 3200
+	pagesPerBook         = 410
+	booksPerShelf        = 32
+	shelvesPerWall       = 5
+	wallsPerHexagon      = 4
+	linesPerPage         = 40
+	charsPerLine         = 80
+	charsPerPage         = linesPerPage * charsPerLine // 3200
+	exponentialDecayRate = 1.05
 )
 
 type Library struct {
@@ -138,13 +139,15 @@ func (l Library) GetOccurrenceCount(text string) int {
 
 	// decay initial max count exponentially by length
 	maxCount := 100_000_000 // 100M for single characters
-	baseCount := maxCount / int(math.Pow(2, float64(textLen-1)))
+	baseCount := maxCount / int(math.Pow(exponentialDecayRate, float64(textLen-1)))
+
+	baseCount = max(1, baseCount)
 
 	hash := sha256.Sum256([]byte(strings.ToLower(text)))
 	seed := int64(binary.BigEndian.Uint64(hash[:8])) //nolint:gosec
 	rng := rand.New(rand.NewSource(seed))            //nolint:gosec
 
-	variation := baseCount / 4 // ±25% variation
+	variation := max(1, baseCount/4) // ±25% variation, minimum 1
 	adjustment := rng.Intn(2*variation) - variation
 
 	return max(1, baseCount+adjustment)
