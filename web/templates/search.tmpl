@@ -42,16 +42,16 @@
     </style>
   </head>
   <body class="min-h-screen text-parchment font-mono">
-    <header class="border-b border-aged/20 py-6">
-      <div class="container mx-auto px-4">
+    <header class="border-b border-aged/20 py-3 sm:py-4 md:py-6">
+      <div class="container mx-auto px-3 sm:px-4">
         <div class="flex items-center justify-between">
           <a
             href="/"
-            class="text-2xl tracking-widest text-aged hover:text-amber-600 transition-colors"
+            class="text-lg sm:text-xl md:text-2xl tracking-widest text-aged hover:text-amber-600 transition-colors"
           >
             THE LIBRARY
           </a>
-          <nav class="flex gap-8 text-sm tracking-wider">
+          <nav class="flex gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm tracking-wider">
             <a
               href="/search"
               class="text-aged/80 hover:text-aged transition-colors"
@@ -134,14 +134,14 @@
             {{ end }}
           </div>
 
-          <div class="flex justify-center items-center gap-3 pt-6">
+          <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 pt-6">
             <form action="/search" method="POST">
               <input type="hidden" name="text" value="{{ .query }}" />
               <input type="hidden" name="page" value="{{ sub .currentPage 1 }}" />
               <button
                 type="submit"
                 {{ if not .hasPrev }}disabled{{ end }}
-                class="bg-aged/10 hover:bg-aged/20 disabled:bg-aged/5 border border-aged/30 disabled:border-aged/20 text-aged disabled:text-aged/30 px-4 py-2 rounded transition-all text-xs disabled:cursor-not-allowed"
+                class="bg-aged/10 hover:bg-aged/20 disabled:bg-aged/5 border border-aged/30 disabled:border-aged/20 text-aged disabled:text-aged/30 px-4 py-2 sm:px-6 sm:py-2.5 rounded transition-all text-xs sm:text-sm disabled:cursor-not-allowed"
               >
                 ←
               </button>
@@ -160,7 +160,7 @@
               <span class="text-aged/50 text-xs">/ {{ .totalPages }}</span>
               <button
                 type="submit"
-                class="bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-3 py-2 rounded transition-all text-xs"
+                class="bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-3 py-2 rounded transition-all text-xs uppercase"
               >
                 Go
               </button>
@@ -172,7 +172,7 @@
               <button
                 type="submit"
                 {{ if not .hasNext }}disabled{{ end }}
-                class="bg-aged/10 hover:bg-aged/20 disabled:bg-aged/5 border border-aged/30 disabled:border-aged/20 text-aged disabled:text-aged/30 px-4 py-2 rounded transition-all text-xs disabled:cursor-not-allowed"
+                class="bg-aged/10 hover:bg-aged/20 disabled:bg-aged/5 border border-aged/30 disabled:border-aged/20 text-aged disabled:text-aged/30 px-4 py-2 sm:px-6 sm:py-2.5 rounded transition-all text-xs sm:text-sm disabled:cursor-not-allowed"
               >
                 →
               </button>
