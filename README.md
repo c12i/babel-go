@@ -18,4 +18,14 @@ characters that _could_ exist.
 -   Jonathan Basile's implementation at [libraryofbabel.info](https://libraryofbabel.info)
 -   Addressing system was inspired by [@tdjsnelling](https://github.com/tdjsnelling)'s [TypeScript implementation](https://github.com/tdjsnelling/babel)
 
+## Usage
+
+Core API allows a user to:
+
+-   Text Search -> Search for locations where user text exists in the library
+-   Browse -> View the page contents of a given location
+-   Random -> View a page from a random location in the library
+
+You can interact with the program via [web app](https://babel.c12i.xyz) and a very simple [CLI](./cmd/cli/main.go)
+
 contact: [`hello@collinsmuriuki.xyz`](mailto:hello@collinsmuriuki.xyz)

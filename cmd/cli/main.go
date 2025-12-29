@@ -10,6 +10,7 @@ import (
 
 var CLI struct {
 	Search SearchCmd `cmd:"" help:"Search for text in the library of Babel"`
+	Random RandomCmd `cmd:"" help:"Get a random location"`
 	Browse BrowseCmd `cmd:"" help:"Browse a page of a book in the library given its address"`
 }
 
@@ -21,6 +22,10 @@ type SearchCmd struct {
 	Text   string `arg:"" help:"Text to search for"`
 	Offset int    `arg:"" help:"Starting position"  default:"0"`
 	Limit  int    `arg:"" help:"Number of results"  default:"10"`
+}
+
+type RandomCmd struct {
+	Browse bool `help:"Immediately browse the random page" default:"false"`
 }
 
 func (s *SearchCmd) Run(ctx *Context) error {
@@ -56,6 +61,20 @@ func (s *BrowseCmd) Run(ctx *Context) error {
 		return err
 	}
 	fmt.Printf("%s", pageContent)
+	return nil
+}
+
+func (r *RandomCmd) Run(ctx *Context) error {
+	location := library.RandomLocation()
+	if r.Browse {
+		pageContent, err := ctx.Library.Browse(location)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("%s", pageContent)
+	} else {
+		fmt.Printf("%s\n", location.String())
+	}
 	return nil
 }
 
