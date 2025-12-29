@@ -59,7 +59,7 @@ func (h *Handler) SearchPost(c *gin.Context) {
 
 	h.logger.Printf("searching for: %q (page %d)", text, page)
 
-	const resultsPerPage = 10
+	const resultsPerPage = 20
 	offset := (page - 1) * resultsPerPage
 
 	locations, err := h.lib.SearchPaginated(text, offset, resultsPerPage)
@@ -184,4 +184,33 @@ func highlightText(content, query string) string {
 	})
 
 	return highlighted
+}
+
+func (h *Handler) RandomPage(c *gin.Context) {
+	h.logger.Println("generating random page")
+	location := library.RandomLocation()
+
+	h.logger.Printf("random location: %s", location.String())
+
+	// get the content at this location
+	content, err := h.lib.Browse(location)
+	if err != nil {
+		h.logger.Printf("browse failed for random page: %v", err)
+		c.HTML(http.StatusInternalServerError, "browse.tmpl", gin.H{
+			"title": "Browse",
+			"error": "Failed to load random page",
+		})
+		return
+	}
+
+	formattedContent := formatPageContent(content)
+	displayContent := template.HTML(html.EscapeString(formattedContent)) //nolint:gosec
+
+	c.HTML(http.StatusOK, "browse.tmpl", gin.H{
+		"title":          "Random Page",
+		"location":       location,
+		"displayContent": displayContent,
+		"nextLocation":   location.Next(),
+		"prevLocation":   location.Previous(),
+	})
 }

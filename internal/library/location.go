@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"math/rand"
 	"strconv"
 	"strings"
 )
@@ -241,4 +242,26 @@ func (l Location) Previous() *Location {
 	prev.Hexagon = hexInt.Text(36)
 
 	return &prev
+}
+
+// Random generates a random location in the library
+func RandomLocation() *Location {
+	// generate a large random hexagon by creating random bytes
+	// similar to what search results produce
+	// randomly choose size between 63-1024 bytes for variety in hexagon length
+	byteSize := rand.Intn(1024-63+1) + 63 //nolint:gosec
+	randomBytes := make([]byte, byteSize)
+	for i := range randomBytes {
+		randomBytes[i] = byte(rand.Intn(256)) //nolint: gosec
+	}
+	// convert random bytes to big.Int and then to base-36 string
+	hexagonNum := new(big.Int).SetBytes(randomBytes)
+
+	return &Location{
+		Hexagon: hexagonNum.Text(36),
+		Wall:    rand.Intn(wallsPerHexagon),  //nolint: gosec
+		Shelf:   rand.Intn(shelvesPerWall),   // nolint: gosec
+		Book:    rand.Intn(booksPerShelf),    //nolint: gosec
+		Page:    rand.Intn(pagesPerBook) + 1, // nolint: gosec
+	}
 }

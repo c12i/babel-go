@@ -238,7 +238,6 @@ func (l Library) base29NumberToString(n *big.Int) string {
 			byte := l.charset[rng.Intn(len(l.charset))]
 			runes = append(runes, rune(byte))
 		}
-		fmt.Printf("len of chars = %d", len(runes))
 	}
 
 	return string(runes)

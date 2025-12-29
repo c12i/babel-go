@@ -1,9 +1,12 @@
 package web
 
 import (
+	"fmt"
 	"html/template"
 	"log"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,6 +30,30 @@ func NewServer(handler *Handler, logger *log.Logger) *Server {
 		"sub": func(a, b int) int {
 			return a - b
 		},
+		"formatNumber": func(n int) string {
+			// convert number to string
+			str := strconv.Itoa(n)
+			// add commas every 3 digits from right to left
+			if len(str) <= 3 {
+				return str
+			}
+			var result []byte
+			for i, digit := range str {
+				if i > 0 && (len(str)-i)%3 == 0 {
+					result = append(result, ',')
+				}
+				result = append(result, byte(digit))
+			}
+			return string(result)
+		},
+		"toPowerOf2": func(n int) string {
+			if n <= 0 {
+				return "0"
+			}
+			// calculate log2 and round to nearest integer
+			exponent := int(math.Round(math.Log2(float64(n))))
+			return fmt.Sprintf("2^%d", exponent)
+		},
 	})
 
 	router.LoadHTMLGlob("web/templates/*.tmpl")
@@ -45,6 +72,7 @@ func NewServer(handler *Handler, logger *log.Logger) *Server {
 	router.POST("/search", handler.SearchPost)
 	router.GET("/browse", handler.BrowseForm)
 	router.POST("/browse", handler.Browse)
+	router.GET("/random", handler.RandomPage)
 
 	return &Server{
 		router: router,
