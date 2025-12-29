@@ -61,7 +61,7 @@ func (l Library) Search(text string) (*Location, error) {
 func (l Library) SearchStream(text string) (<-chan *Location, error) {
 	totalCount := l.GetOccurrenceCount(text)
 	// location and job worker channel
-	locationChan, workerChan := make(chan *Location, 100), make(chan int, 100)
+	locationChan, workerChan := make(chan *Location), make(chan int, 100)
 	// start fixed number of workers
 	numWorkers := runtime.NumCPU()
 	var wg sync.WaitGroup
@@ -137,7 +137,7 @@ func (l Library) GetOccurrenceCount(text string) int {
 	textLen := len(text)
 
 	// decay initial max count exponentially by length
-	maxCount := 1_000_000_000 // 100M for single characters
+	maxCount := 1_000_000_000 // 1Billion for single characters
 	baseCount := maxCount / int(math.Pow(exponentialDecayRate, float64(textLen-1)))
 
 	baseCount = max(1, baseCount)
@@ -176,13 +176,11 @@ func (l Library) generateBase29Number(text string, variant int) (*big.Int, error
 	for _, char := range pageChars {
 		result.Mul(result, l.base)
 		index, exists := l.charToIndex[char]
-
 		if !exists {
 			return nil, fmt.Errorf(
 				"text contains invalid characters, supported charset: %v", l.charset,
 			)
 		}
-
 		result.Add(result, big.NewInt(int64(index)))
 	}
 
@@ -227,6 +225,7 @@ func (l Library) base29NumberToString(n *big.Int) string {
 
 	slices.Reverse(runes)
 
+	// XXX: Hack to ensure page contains 3200 characters
 	// if we are unable to fill a page with 3200 chars, use existing chars
 	// as seed to generate random chars to fill the page
 	if len(runes) < charsPerPage {
