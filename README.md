@@ -13,43 +13,9 @@ characters that _could_ exist.
 -   Complete nonsense
 -   Shakespeare's works
 
-## Implementation
+## Inspiration
 
-The genius of the original implementation (by Jonathan Basile at [libraryofbabel.info](https://libraryofbabel.info) is that you don't store all these books.
-This would require infinite storage. Instead, you use math to calculate
+-   Jonathan Basile's implementation at [libraryofbabel.info](https://libraryofbabel.info)
+-   Addressing system was inspired by @tdjsnelling's [TypeScript implementation](https://github.com/tdjsnelling/babel)
 
--   Given some text, what is its location in the library?
--   Given a location, what's the text that's on that page?
-
-It's deterministic: the same text _always_ maps to the same location.
-
-## Key components
-
-### Character Set
-
--   Only 29 characters: space + a-z + comma + period
-
-### Book Structure
-
--   410 pages per book
--   40 lines per page
--   80 characters per line
--   =3,200 characters per page
--   =1,312,000 characters per book
-
-### Location System
-
-The library is organized hierarchically:
-
--   Hexagon: A room in the library (can be huge numbers)
--   Wall: 4 walls (0-3)
--   Shelf: 5 shelves per wall (0-4)
--   Book: 32 books per shelf (0-31)
--   Page: 410 pages per book (1-410)
-
-### The Core Algorithm
-
-This is the mathematical magic
-
--   Text -> Number: Treat text as a base29 number
--   Number -> Location: Break that huge number into coordinates (hexagon, wall, shelf, volume, page)
+contact: [`hello@collinsmuriuki.xyz`](mailto:hello@collinsmuriuki.xyz)
