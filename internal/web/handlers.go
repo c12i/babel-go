@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"html"
 	"html/template"
 	"log"
@@ -96,6 +97,19 @@ func (h *Handler) BrowseForm(c *gin.Context) {
 func (h *Handler) Browse(c *gin.Context) {
 	locationStr := c.PostForm("location")
 	query := c.PostForm("query")
+
+	// check if individual components are provided (from jump-to-page form)
+	if locationStr == "" {
+		hexagon := c.PostForm("hexagon")
+		wall := c.PostForm("wall")
+		shelf := c.PostForm("shelf")
+		book := c.PostForm("book")
+		page := c.PostForm("page")
+
+		if hexagon != "" && wall != "" && shelf != "" && book != "" && page != "" {
+			locationStr = fmt.Sprintf("%s.%s.%s.%s.%s", hexagon, wall, shelf, book, page)
+		}
+	}
 
 	if locationStr == "" {
 		h.logger.Println("no location provided")
