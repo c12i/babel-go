@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -141,6 +142,8 @@ func (h *Handler) Browse(c *gin.Context) {
 		"location":       location,
 		"displayContent": displayContent,
 		"hasQuery":       query != "",
+		"nextLocation":   location.Next(),
+		"prevLocation":   location.Previous(),
 	})
 }
 
@@ -151,10 +154,7 @@ func formatPageContent(content string) string {
 
 	runes := []rune(content)
 	for i := 0; i < len(runes); i += charsPerLine {
-		end := i + charsPerLine
-		if end > len(runes) {
-			end = len(runes)
-		}
+		end := min(i+charsPerLine, len(runes))
 		formatted.WriteString(string(runes[i:end]))
 		if end < len(runes) {
 			formatted.WriteString("\n")
@@ -164,17 +164,24 @@ func formatPageContent(content string) string {
 	return formatted.String()
 }
 
-// highlightText wraps the query text in the content with HTML mark tags for highlighting
+// Wraps the query text in the content with HTML mark tags for highlighting
+// it handles multi-line matches by treating any whitespace in the query as matching any whitespace in the content
 func highlightText(content, query string) string {
 	escapedContent := html.EscapeString(content)
-	lowercaseQuery := strings.ToLower(query)
-	escapedQuery := html.EscapeString(lowercaseQuery)
+	escapedQuery := html.EscapeString(query)
 
-	highlighted := strings.ReplaceAll(
-		escapedContent,
-		escapedQuery,
-		"<mark class=\"bg-amber-500/30 text-amber-200 font-bold\">"+escapedQuery+"</mark>",
-	)
+	// create a regex pattern that treats any whitespace in the query as matching any whitespace (\s+) in the content
+	// This allows matching across line breaks
+	pattern := regexp.QuoteMeta(escapedQuery)
+	pattern = regexp.MustCompile(`\s+`).ReplaceAllString(pattern, `\s+`)
+
+	// use case-insensitive matching
+	re := regexp.MustCompile(`(?i)` + pattern)
+
+	// replace all matches with highlighted version
+	highlighted := re.ReplaceAllStringFunc(escapedContent, func(match string) string {
+		return "<mark class=\"bg-amber-500/30 text-amber-200 font-bold\">" + match + "</mark>"
+	})
 
 	return highlighted
 }

@@ -16,6 +16,6 @@ characters that _could_ exist.
 ## Inspiration
 
 -   Jonathan Basile's implementation at [libraryofbabel.info](https://libraryofbabel.info)
--   Addressing system was inspired by @tdjsnelling's [TypeScript implementation](https://github.com/tdjsnelling/babel)
+-   Addressing system was inspired by [@tdjsnelling](https://github.com/tdjsnelling)'s [TypeScript implementation](https://github.com/tdjsnelling/babel)
 
 contact: [`hello@collinsmuriuki.xyz`](mailto:hello@collinsmuriuki.xyz)

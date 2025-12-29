@@ -149,3 +149,305 @@ func TestGetLocationWithInvalidHexagonString(t *testing.T) {
 		t.Errorf("invalid base32 string succeeded when it was expected to fail: %v", err2)
 	}
 }
+
+/*
+	TESTING Next() and Previous() navigation
+*/
+
+func TestLocationNext_SimplePage(t *testing.T) {
+	location := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    0,
+		Page:    1,
+	}
+
+	next := location.Next()
+	expected := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    0,
+		Page:    2,
+	}
+
+	if !next.Equals(expected) {
+		t.Errorf("got %+v, want %+v", next, expected)
+	}
+}
+
+func TestLocationNext_PageOverflowToBook(t *testing.T) {
+	location := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    0,
+		Page:    410, // max page
+	}
+
+	next := location.Next()
+	expected := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    1,
+		Page:    1,
+	}
+
+	if !next.Equals(expected) {
+		t.Errorf("got %+v, want %+v", next, expected)
+	}
+}
+
+func TestLocationNext_BookOverflowToShelf(t *testing.T) {
+	location := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    31, // max book (0-31)
+		Page:    410,
+	}
+
+	next := location.Next()
+	expected := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   1,
+		Book:    0,
+		Page:    1,
+	}
+
+	if !next.Equals(expected) {
+		t.Errorf("got %+v, want %+v", next, expected)
+	}
+}
+
+func TestLocationNext_ShelfOverflowToWall(t *testing.T) {
+	location := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   4, // max shelf (0-4)
+		Book:    31,
+		Page:    410,
+	}
+
+	next := location.Next()
+	expected := Location{
+		Hexagon: "0",
+		Wall:    1,
+		Shelf:   0,
+		Book:    0,
+		Page:    1,
+	}
+
+	if !next.Equals(expected) {
+		t.Errorf("got %+v, want %+v", next, expected)
+	}
+}
+
+func TestLocationNext_WallOverflowToHexagon(t *testing.T) {
+	location := Location{
+		Hexagon: "0",
+		Wall:    3, // max wall (0-3)
+		Shelf:   4,
+		Book:    31,
+		Page:    410,
+	}
+
+	next := location.Next()
+	expected := Location{
+		Hexagon: "1",
+		Wall:    0,
+		Shelf:   0,
+		Book:    0,
+		Page:    1,
+	}
+
+	if !next.Equals(expected) {
+		t.Errorf("got %+v, want %+v", next, expected)
+	}
+}
+
+func TestLocationNext_HexagonIncrement(t *testing.T) {
+	location := Location{
+		Hexagon: "abc",
+		Wall:    3,
+		Shelf:   4,
+		Book:    31,
+		Page:    410,
+	}
+
+	next := location.Next()
+	expected := Location{
+		Hexagon: "abd",
+		Wall:    0,
+		Shelf:   0,
+		Book:    0,
+		Page:    1,
+	}
+
+	if !next.Equals(expected) {
+		t.Errorf("got %+v, want %+v", next, expected)
+	}
+}
+
+func TestLocationPrevious_SimplePage(t *testing.T) {
+	location := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    0,
+		Page:    2,
+	}
+
+	prev := location.Previous()
+	expected := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    0,
+		Page:    1,
+	}
+
+	if !prev.Equals(expected) {
+		t.Errorf("got %+v, want %+v", prev, expected)
+	}
+}
+
+func TestLocationPrevious_PageUnderflowToBook(t *testing.T) {
+	location := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    1,
+		Page:    1, // min page
+	}
+
+	prev := location.Previous()
+	expected := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    0,
+		Page:    410,
+	}
+
+	if !prev.Equals(expected) {
+		t.Errorf("got %+v, want %+v", prev, expected)
+	}
+}
+
+func TestLocationPrevious_BookUnderflowToShelf(t *testing.T) {
+	location := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   1,
+		Book:    0, // min book
+		Page:    1,
+	}
+
+	prev := location.Previous()
+	expected := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   0,
+		Book:    31,
+		Page:    410,
+	}
+
+	if !prev.Equals(expected) {
+		t.Errorf("got %+v, want %+v", prev, expected)
+	}
+}
+
+func TestLocationPrevious_ShelfUnderflowToWall(t *testing.T) {
+	location := Location{
+		Hexagon: "0",
+		Wall:    1,
+		Shelf:   0, // min shelf
+		Book:    0,
+		Page:    1,
+	}
+
+	prev := location.Previous()
+	expected := Location{
+		Hexagon: "0",
+		Wall:    0,
+		Shelf:   4,
+		Book:    31,
+		Page:    410,
+	}
+
+	if !prev.Equals(expected) {
+		t.Errorf("got %+v, want %+v", prev, expected)
+	}
+}
+
+func TestLocationPrevious_WallUnderflowToHexagon(t *testing.T) {
+	location := Location{
+		Hexagon: "1",
+		Wall:    0, // min wall
+		Shelf:   0,
+		Book:    0,
+		Page:    1,
+	}
+
+	prev := location.Previous()
+	expected := Location{
+		Hexagon: "0",
+		Wall:    3,
+		Shelf:   4,
+		Book:    31,
+		Page:    410,
+	}
+
+	if !prev.Equals(expected) {
+		t.Errorf("got %+v, want %+v", prev, expected)
+	}
+}
+
+func TestLocationPrevious_HexagonDecrement(t *testing.T) {
+	location := Location{
+		Hexagon: "abd",
+		Wall:    0,
+		Shelf:   0,
+		Book:    0,
+		Page:    1,
+	}
+
+	prev := location.Previous()
+	expected := Location{
+		Hexagon: "abc",
+		Wall:    3,
+		Shelf:   4,
+		Book:    31,
+		Page:    410,
+	}
+
+	if !prev.Equals(expected) {
+		t.Errorf("got %+v, want %+v", prev, expected)
+	}
+}
+
+func TestLocationNextPrevious_RoundTrip(t *testing.T) {
+	// Test that Next().Previous() returns to original
+	location := Location{
+		Hexagon: "3a7f",
+		Wall:    2,
+		Shelf:   3,
+		Book:    15,
+		Page:    204,
+	}
+
+	roundTrip := location.Next().Previous()
+	if !roundTrip.Equals(location) {
+		t.Errorf("Next().Previous() roundtrip failed: got %+v, want %+v", roundTrip, location)
+	}
+
+	// Test that Previous().Next() returns to original
+	roundTrip2 := location.Previous().Next()
+	if !roundTrip2.Equals(location) {
+		t.Errorf("Previous().Next() roundtrip failed: got %+v, want %+v", roundTrip2, location)
+	}
+}

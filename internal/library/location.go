@@ -23,13 +23,13 @@ func LocationFromString(address string) (*Location, error) {
 		return nil, fmt.Errorf("address is not of valid length, expected %d, got %d", 5, partsLen)
 	}
 
-	// Validate hexagon
+	// validate hexagon
 	hexagon := parts[0]
 	if _, ok := new(big.Int).SetString(hexagon, 36); !ok {
 		return nil, fmt.Errorf("invalid hexagon: must be valid base-36 string")
 	}
 
-	// Parse and validate numeric parts
+	// parse and validate numeric parts
 	wall, err := parseAndValidate(parts[1], "wall", 0, wallsPerHexagon-1)
 	if err != nil {
 		return nil, err
@@ -63,28 +63,28 @@ func LocationFromString(address string) (*Location, error) {
 func locationFromBase29Number(n *big.Int) *Location {
 	temp, quotient := new(big.Int).Abs(n), new(big.Int)
 
-	// Get page
+	// get page
 	page := new(big.Int)
 	quotient, page = quotient.DivMod(temp, big.NewInt(pagesPerBook), page)
 	temp.Set(quotient)
 
-	// Get book
+	// get book
 	book := new(big.Int)
 	quotient, book = quotient.DivMod(temp, big.NewInt(booksPerShelf), book)
 	temp.Set(quotient)
 
-	// Get shelf
+	// get shelf
 	shelf := new(big.Int)
 	quotient, shelf = quotient.DivMod(temp, big.NewInt(shelvesPerWall), shelf)
 	temp.Set(quotient)
 
-	// Get wall
+	// get wall
 	wall := new(big.Int)
 	quotient, wall = quotient.DivMod(temp, big.NewInt(wallsPerHexagon), wall)
 	temp.Set(quotient)
 
 	return &Location{
-		// Whatever is left from the quotient is the hexagon identifier
+		// whatever is left from the quotient is the hexagon identifier
 		Hexagon: quotient.Text(36),
 		Wall:    int(wall.Int64()),
 		Shelf:   int(shelf.Int64()),
@@ -111,22 +111,22 @@ func (l Location) ToBigInt() (*big.Int, error) {
 		return nil, errors.New("invalid hexagon string format")
 	}
 
-	// Build up from hexagon
+	// build up from hexagon
 	result := new(big.Int).Set(hexagon)
 
-	// Add wall
+	// add wall
 	result.Mul(result, big.NewInt(wallsPerHexagon))
 	result.Add(result, big.NewInt(int64(l.Wall)))
 
-	// Add shelf
+	// add shelf
 	result.Mul(result, big.NewInt(shelvesPerWall))
 	result.Add(result, big.NewInt(int64(l.Shelf)))
 
-	// Add book
+	// add book
 	result.Mul(result, big.NewInt(booksPerShelf))
 	result.Add(result, big.NewInt(int64(l.Book)))
 
-	// Add page
+	// add page
 	result.Mul(result, big.NewInt(pagesPerBook))
 	result.Add(result, big.NewInt(int64(l.Page)-1))
 
@@ -143,4 +143,102 @@ func (l Location) Equals(other Location) bool {
 
 func (l Location) String() string {
 	return fmt.Sprintf("%s.%d.%d.%d.%d", l.Hexagon, l.Wall, l.Shelf, l.Book, l.Page)
+}
+
+// Next returns the next page location
+func (l Location) Next() *Location {
+	next := Location{
+		Hexagon: l.Hexagon,
+		Wall:    l.Wall,
+		Shelf:   l.Shelf,
+		Book:    l.Book,
+		Page:    l.Page,
+	}
+
+	// increment page
+	if next.Page < pagesPerBook {
+		next.Page++
+		return &next
+	}
+
+	// page is at max, increment book
+	next.Page = 1
+	if next.Book < booksPerShelf-1 {
+		next.Book++
+		return &next
+	}
+
+	// book is at max, increment shelf
+	next.Book = 0
+	if next.Shelf < shelvesPerWall-1 {
+		next.Shelf++
+		return &next
+	}
+
+	// shelf is at max, increment wall
+	next.Shelf = 0
+	if next.Wall < wallsPerHexagon-1 {
+		next.Wall++
+		return &next
+	}
+
+	// wall is at max, increment hexagon
+	next.Wall = 0
+	hexInt, ok := new(big.Int).SetString(next.Hexagon, 36)
+	if !ok {
+		return &next
+	}
+	hexInt.Add(hexInt, big.NewInt(1))
+	next.Hexagon = hexInt.Text(36)
+
+	return &next
+}
+
+// Previous returns the previous page location
+func (l Location) Previous() *Location {
+	prev := Location{
+		Hexagon: l.Hexagon,
+		Wall:    l.Wall,
+		Shelf:   l.Shelf,
+		Book:    l.Book,
+		Page:    l.Page,
+	}
+
+	// decrement page
+	if prev.Page > 1 {
+		prev.Page--
+		return &prev
+	}
+
+	// page is at min, decrement book
+	prev.Page = pagesPerBook
+	if prev.Book > 0 {
+		prev.Book--
+		return &prev
+	}
+
+	// book is at min, decrement shelf
+	prev.Book = booksPerShelf - 1
+	if prev.Shelf > 0 {
+		prev.Shelf--
+		return &prev
+	}
+
+	// shelf is at min, decrement wall
+	prev.Shelf = shelvesPerWall - 1
+	if prev.Wall > 0 {
+		prev.Wall--
+		return &prev
+	}
+
+	// wall is at min, decrement hexagon
+	prev.Wall = wallsPerHexagon - 1
+	hexInt, ok := new(big.Int).SetString(prev.Hexagon, 36)
+	if !ok || hexInt.Sign() <= 0 {
+		return &prev
+	}
+	hexInt.Sub(hexInt, big.NewInt(1))
+	prev.Hexagon = hexInt.Text(36)
+
+	return &prev
 }
