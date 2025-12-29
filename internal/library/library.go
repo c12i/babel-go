@@ -224,7 +224,22 @@ func (l Library) base29NumberToString(n *big.Int) string {
 		runes = append(runes, rune(charByte))
 		temp.Set(quotient)
 	}
+
 	slices.Reverse(runes)
+
+	// if we are unable to fill a page with 3200 chars, use existing chars
+	// as seed to generate random chars to fill the page
+	if len(runes) < charsPerPage {
+		startIdx := len(runes)
+		hash := sha256.Sum256([]byte(string(runes)))
+		seed := int64(binary.BigEndian.Uint64(hash[:8])) //nolint:gosec
+		rng := rand.New(rand.NewSource(seed))            //nolint:gosec // crypto not needed
+		for i := startIdx; i < charsPerPage; i++ {
+			byte := l.charset[rng.Intn(len(l.charset))]
+			runes = append(runes, rune(byte))
+		}
+		fmt.Printf("len of chars = %d", len(runes))
+	}
 
 	return string(runes)
 }
