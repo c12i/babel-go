@@ -9,6 +9,11 @@ import (
 	"strings"
 )
 
+const (
+	maxHexagonCharSize = 3004
+	base36Chars        = "0123456789abcdefghijklmnopqrstuvwxyz"
+)
+
 type Location struct {
 	Hexagon string
 	Wall    int
@@ -246,21 +251,17 @@ func (l Location) Previous() *Location {
 
 // Random generates a random location in the library
 func RandomLocation() *Location {
-	// generate a large random hexagon by creating random bytes
-	// similar to what search results produce
-	// randomly choose size between 63-1024 bytes for variety in hexagon length
-	byteSize := rand.Intn(1024-63+1) + 63 //nolint:gosec
-	randomBytes := make([]byte, byteSize)
-	for i := range randomBytes {
-		randomBytes[i] = byte(rand.Intn(256)) //nolint: gosec
+	// Generate random base36 string of random length
+	hexagonLen := rand.Intn(maxHexagonCharSize) + 1 //nolint: gosec
+	hexagon := make([]byte, hexagonLen)
+	for i := range hexagon {
+		hexagon[i] = base36Chars[rand.Intn(36)] //nolint:gosec
 	}
-	// convert random bytes to big.Int and then to base-36 string
-	hexagonNum := new(big.Int).SetBytes(randomBytes)
 
 	return &Location{
-		Hexagon: hexagonNum.Text(36),
+		Hexagon: string(hexagon),
 		Wall:    rand.Intn(wallsPerHexagon),  //nolint: gosec
-		Shelf:   rand.Intn(shelvesPerWall),   // nolint: gosec
+		Shelf:   rand.Intn(shelvesPerWall),   //nolint: gosec
 		Book:    rand.Intn(booksPerShelf),    //nolint: gosec
 		Page:    rand.Intn(pagesPerBook) + 1, // nolint: gosec
 	}
