@@ -20,8 +20,8 @@ type Context struct {
 
 type SearchCmd struct {
 	Text   string `arg:"" help:"Text to search for"`
-	Offset int    `arg:"" help:"Starting position"  default:"0"`
-	Limit  int    `arg:"" help:"Number of results"  default:"10"`
+	Offset int    `       help:"Starting position"  default:"0"`
+	Limit  int    `       help:"Number of results"  default:"10"`
 }
 
 type RandomCmd struct {
