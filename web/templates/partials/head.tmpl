@@ -1,0 +1,58 @@
+{{ define "head" }}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ .title }} - Library of Babel</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            parchment: "#f4f1e8",
+            ink: "#1a1a1a",
+            aged: "#c9b99b",
+          },
+          fontFamily: {
+            mono: ["Courier New", "Courier", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer components {
+      .location-link {
+        @apply bg-transparent border-0 text-aged font-mono p-0 cursor-pointer text-left hover:text-amber-600 transition-colors w-full;
+      }
+
+      .page-content {
+        @apply font-mono text-xs sm:text-sm leading-[1.2] tracking-wide whitespace-pre break-words;
+        display: block;
+        margin: 0 auto;
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      @media (min-width: 640px) {
+        .page-content {
+          width: fit-content;
+        }
+      }
+    }
+
+    body {
+      background: linear-gradient(to bottom, #0a0a0a 0%, #1a1a1a 100%);
+    }
+
+    mark {
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+{{ end }}

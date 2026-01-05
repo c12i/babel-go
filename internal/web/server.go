@@ -6,6 +6,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,7 @@ func NewServer(handler *Handler, logger *log.Logger) *Server {
 	router.Use(gin.Recovery())
 
 	// set custom template functions
-	router.SetFuncMap(template.FuncMap{
+	funcMap := template.FuncMap{
 		"add": func(a, b int) int {
 			return a + b
 		},
@@ -54,9 +55,14 @@ func NewServer(handler *Handler, logger *log.Logger) *Server {
 			exponent := int(math.Round(math.Log2(float64(n))))
 			return fmt.Sprintf("2^%d", exponent)
 		},
-	})
+	}
+	router.SetFuncMap(funcMap)
 
-	router.LoadHTMLGlob("web/templates/*.tmpl")
+	// load templates from main directory and partials subdirectory
+	mainTemplates, _ := filepath.Glob("web/templates/*.tmpl")
+	partialTemplates, _ := filepath.Glob("web/templates/partials/*.tmpl")
+	allTemplates := append(mainTemplates, partialTemplates...)
+	router.LoadHTMLFiles(allTemplates...)
 
 	// serve static files
 	router.Static("/static", "./web/static")

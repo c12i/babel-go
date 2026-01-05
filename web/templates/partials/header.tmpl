@@ -1,0 +1,31 @@
+{{ define "header" }}
+<header class="border-b border-aged/20 py-3 sm:py-4 md:py-6">
+  <div class="container mx-auto px-3 sm:px-4">
+    <div class="flex items-center justify-between">
+      <a
+        href="/"
+        class="text-lg sm:text-xl md:text-2xl tracking-widest text-aged hover:text-amber-600 transition-colors"
+      >
+        THE LIBRARY
+      </a>
+      <nav class="flex gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm tracking-wider">
+        <a
+          href="/search"
+          class="text-aged/80 hover:text-aged transition-colors"
+          >SEARCH</a
+        >
+        <a
+          href="/browse"
+          class="text-aged/80 hover:text-aged transition-colors"
+          >BROWSE</a
+        >
+        <a
+          href="/random"
+          class="text-aged/80 hover:text-aged transition-colors"
+          >RANDOM</a
+        >
+      </nav>
+    </div>
+  </div>
+</header>
+{{ end }}

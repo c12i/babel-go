@@ -1,76 +1,8 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ .title }} - Library of Babel</title>
-    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              parchment: "#f4f1e8",
-              ink: "#1a1a1a",
-              aged: "#c9b99b",
-            },
-            fontFamily: {
-              mono: ["Courier New", "Courier", "monospace"],
-            },
-          },
-        },
-      };
-    </script>
-
-    <style type="text/tailwindcss">
-      @layer components {
-        .location-link {
-          @apply bg-transparent border-0 text-aged font-mono p-0 cursor-pointer text-left hover:text-amber-600 transition-colors w-full;
-        }
-
-        .page-content {
-          @apply font-mono text-sm leading-[1.2] tracking-wide whitespace-pre-wrap break-words;
-        }
-      }
-
-      body {
-        background: linear-gradient(to bottom, #0a0a0a 0%, #1a1a1a 100%);
-      }
-    </style>
-  </head>
+  {{ template "head" . }}
   <body class="min-h-screen text-parchment font-mono">
-    <header class="border-b border-aged/20 py-3 sm:py-4 md:py-6">
-      <div class="container mx-auto px-3 sm:px-4">
-        <div class="flex items-center justify-between">
-          <a
-            href="/"
-            class="text-lg sm:text-xl md:text-2xl tracking-widest text-aged hover:text-amber-600 transition-colors"
-          >
-            THE LIBRARY
-          </a>
-          <nav class="flex gap-4 sm:gap-6 md:gap-8 text-xs sm:text-sm tracking-wider">
-            <a
-              href="/search"
-              class="text-aged/80 hover:text-aged transition-colors"
-              >SEARCH</a
-            >
-            <a
-              href="/browse"
-              class="text-aged/80 hover:text-aged transition-colors"
-              >BROWSE</a
-            >
-            <a
-              href="/random"
-              class="text-aged/80 hover:text-aged transition-colors"
-              >RANDOM</a
-            >
-          </nav>
-        </div>
-      </div>
-    </header>
+    {{ template "header" . }}
 
     <main class="container mx-auto px-4 py-12">
       <div class="max-w-3xl mx-auto">
@@ -134,17 +66,6 @@
       </div>
     </main>
 
-    <footer class="pb-8 text-center text-aged/40 text-xs tracking-widest">
-      <p class="mt-6">
-        <a
-          href="https://github.com/c12i/babel-go"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-aged/60 hover:text-aged transition-colors"
-        >
-          View on GitHub
-        </a>
-      </p>
-    </footer>
+    {{ template "footer" . }}
   </body>
 </html>

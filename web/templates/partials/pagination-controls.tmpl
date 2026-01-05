@@ -1,0 +1,46 @@
+{{ define "paginationControls" }}
+<div class="flex justify-center items-center gap-3 pt-6">
+  <form action="/search" method="POST">
+    <input type="hidden" name="text" value="{{ .query }}" />
+    <input type="hidden" name="page" value="{{ sub .currentPage 1 }}" />
+    <button
+      type="submit"
+      {{ if not .hasPrev }}disabled{{ end }}
+      class="bg-aged/10 hover:bg-aged/20 disabled:bg-aged/5 border border-aged/30 disabled:border-aged/20 text-aged disabled:text-aged/30 px-4 py-2 rounded transition-all text-xs disabled:cursor-not-allowed"
+    >
+      ←
+    </button>
+  </form>
+
+  <form action="/search" method="POST" class="flex items-center gap-2">
+    <input type="hidden" name="text" value="{{ .query }}" />
+    <input
+      type="number"
+      name="page"
+      min="1"
+      max="{{ .totalPages }}"
+      placeholder="{{ .currentPage }}"
+      class="w-16 bg-ink/80 border border-aged/30 rounded px-2 py-2 text-parchment font-mono text-xs text-center focus:outline-none focus:border-aged/60 transition-colors"
+    />
+    <span class="text-aged/50 text-xs">/ {{ formatNumber .totalPages }}</span>
+    <button
+      type="submit"
+      class="bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-3 py-2 rounded transition-all text-xs"
+    >
+      Go
+    </button>
+  </form>
+
+  <form action="/search" method="POST">
+    <input type="hidden" name="text" value="{{ .query }}" />
+    <input type="hidden" name="page" value="{{ add .currentPage 1 }}" />
+    <button
+      type="submit"
+      {{ if not .hasNext }}disabled{{ end }}
+      class="bg-aged/10 hover:bg-aged/20 disabled:bg-aged/5 border border-aged/30 disabled:border-aged/20 text-aged disabled:text-aged/30 px-4 py-2 rounded transition-all text-xs disabled:cursor-not-allowed"
+    >
+      →
+    </button>
+  </form>
+</div>
+{{ end }}
