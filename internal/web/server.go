@@ -59,8 +59,14 @@ func NewServer(handler *Handler, logger *log.Logger) *Server {
 	router.SetFuncMap(funcMap)
 
 	// load templates from main directory and partials subdirectory
-	mainTemplates, _ := filepath.Glob("web/templates/*.tmpl")
-	partialTemplates, _ := filepath.Glob("web/templates/partials/*.tmpl")
+	mainTemplates, err := filepath.Glob("web/templates/*.tmpl")
+	if err != nil {
+		log.Panicf("failed to read main templates: %v", err)
+	}
+	partialTemplates, err := filepath.Glob("web/templates/partials/*.tmpl")
+	if err != nil {
+		log.Panicf("failed to read partial templates: %v", err)
+	}
 	allTemplates := append(mainTemplates, partialTemplates...)
 	router.LoadHTMLFiles(allTemplates...)
 
