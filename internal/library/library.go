@@ -239,5 +239,9 @@ func (l Library) base29NumberToString(n *big.Int) string {
 		}
 	}
 
+	// TODO: Handle len(runes) > charsPerPage -> this will happen if a user provides
+	//       a hexagon value with characters > 3004 when calling the Browse API, which
+	//       will produce a page with more than the expected 3200 characters.
+
 	return string(runes)
 }
