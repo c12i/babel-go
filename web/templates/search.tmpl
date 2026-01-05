@@ -107,16 +107,16 @@
         <div class="space-y-6">
           <div class="text-center py-6">
             <p class="text-aged/60 text-sm">
-              <span class="text-aged text-2xl font-light">{{ .total }}</span>
+              <span class="text-aged text-2xl font-light">~{{ formatNumber .total }}</span>
             </p>
             <p class="text-aged/40 text-xs tracking-widest uppercase mt-2">
-              occurrences found
+              occurrences found (~{{ toPowerOf2  .total }})
             </p>
           </div>
 
           <div class="space-y-2">
             <p class="text-aged/50 text-xs tracking-widest uppercase mb-4">
-              Page {{ .currentPage }} of {{ .totalPages }}
+              Page {{ .currentPage }} of {{ formatNumber .totalPages }}
             </p>
 
             {{ range .locations }}
@@ -157,7 +157,7 @@
                 placeholder="{{ .currentPage }}"
                 class="w-16 bg-ink/80 border border-aged/30 rounded px-2 py-2 text-parchment font-mono text-xs text-center focus:outline-none focus:border-aged/60 transition-colors"
               />
-              <span class="text-aged/50 text-xs">/ {{ .totalPages }}</span>
+              <span class="text-aged/50 text-xs">/ {{ formatNumber .totalPages }}</span>
               <button
                 type="submit"
                 class="bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-3 py-2 rounded transition-all text-xs"
