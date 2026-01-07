@@ -5,16 +5,38 @@
   <title>{{ .title }} - Library of Babel</title>
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
 
+  <script>
+    // Theme initialization - runs immediately to prevent flash
+    (function () {
+      const theme =
+        localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light");
+      document.documentElement.classList.add(theme);
+    })();
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
 
   <script>
     tailwind.config = {
+      darkMode: "class",
       theme: {
         extend: {
           colors: {
             parchment: "#f4f1e8",
             ink: "#1a1a1a",
-            aged: "#c9b99b",
+            aged: {
+              DEFAULT: "#c9b99b",
+              light: "#8b7355",
+            },
+            modern: {
+              text: "#1f2937",
+              secondary: "#6b7280",
+              border: "#e5e7eb",
+              hover: "#f3f4f6",
+            },
           },
           fontFamily: {
             mono: ["Courier New", "Courier", "monospace"],
@@ -27,7 +49,11 @@
   <style type="text/tailwindcss">
     @layer components {
       .location-link {
-        @apply bg-transparent border-0 text-aged font-mono p-0 cursor-pointer text-left hover:text-amber-600 transition-colors w-full;
+        @apply bg-transparent border-0 font-mono p-0 cursor-pointer text-left transition-colors w-full text-blue-600 dark:text-aged;
+      }
+
+      .location-link:hover {
+        @apply text-blue-800 dark:text-amber-500;
       }
 
       .page-content {
@@ -46,12 +72,20 @@
     }
 
     body {
+      background: #ffffff;
+      color: #1f2937;
+    }
+
+    .dark body {
       background: linear-gradient(to bottom, #0a0a0a 0%, #1a1a1a 100%);
+      color: #f4f1e8;
     }
 
     mark {
       padding: 2px 4px;
       border-radius: 2px;
+      font-weight: 600;
+      @apply bg-yellow-200 text-gray-900 dark:bg-yellow-500/30 dark:text-yellow-200;
     }
   </style>
 </head>
