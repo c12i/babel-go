@@ -194,7 +194,7 @@ func highlightText(content, query string) string {
 
 	// replace all matches with highlighted version
 	highlighted := re.ReplaceAllStringFunc(escapedContent, func(match string) string {
-		return "<mark class=\"bg-amber-500/30 text-amber-200 font-bold\">" + match + "</mark>"
+		return "<mark>" + match + "</mark>"
 	})
 
 	return highlighted

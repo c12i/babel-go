@@ -1,30 +1,30 @@
 <!doctype html>
 <html lang="en">
   {{ template "head" . }}
-  <body class="min-h-screen text-parchment font-mono">
+  <body class="min-h-screen font-mono text-gray-900 dark:text-parchment">
     {{ template "header" . }}
 
     <main class="container mx-auto px-4 py-12">
       <div class="max-w-3xl mx-auto">
         <div class="text-center mb-16 space-y-4">
-          <h1 class="text-sm tracking-[0.3em] text-aged/60 uppercase">
+          <h1 class="text-sm tracking-[0.3em] text-gray-500 dark:text-aged/60 uppercase">
             Library of Babel
           </h1>
           <p
-            class="text-aged/70 italic text-sm leading-relaxed max-w-2xl mx-auto"
+            class="text-gray-700 dark:text-aged/70 italic text-sm leading-relaxed max-w-2xl mx-auto"
           >
             "The universe (which others call the Library) is composed of an
             indefinite and perhaps infinite number of hexagonal galleries..."
           </p>
-          <p class="text-aged/40 text-xs">— Jorge Luis Borges</p>
+          <p class="text-gray-500 dark:text-aged/40 text-xs">— Jorge Luis Borges</p>
         </div>
 
-        <div class="bg-ink/50 border border-aged/20 rounded p-8">
+        <div class="border rounded p-8 bg-white border-gray-200 shadow-sm dark:bg-ink/50 dark:border-aged/20 dark:shadow-none">
           <form action="/search" method="POST" class="space-y-6">
             <div>
               <label
                 for="text"
-                class="block text-aged/60 text-xs tracking-widest uppercase mb-3"
+                class="block text-gray-700 dark:text-aged/60 text-xs tracking-widest uppercase mb-3 font-semibold"
               >
                 Search the infinite
               </label>
@@ -34,15 +34,15 @@
                 rows="6"
                 maxlength="3200"
                 placeholder="Enter any text... it already exists somewhere in the Library"
-                class="w-full bg-ink/80 border border-aged/30 rounded px-4 py-3 text-parchment font-mono text-sm focus:outline-none focus:border-aged/60 transition-colors placeholder-aged/30"
+                class="w-full rounded px-4 py-3 font-mono text-sm focus:outline-none transition-colors border bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder-gray-400 dark:bg-ink/80 dark:border-aged/30 dark:text-parchment dark:focus:border-aged/60 dark:focus:ring-aged/20 dark:placeholder-aged/30"
                 autofocus
               ></textarea>
-              <p class="mt-2 text-aged/40 text-xs">Maximum 3,200 characters</p>
+              <p class="mt-2 text-gray-500 dark:text-aged/40 text-xs">Maximum 3,200 characters</p>
             </div>
 
             <button
               type="submit"
-              class="w-full bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-6 py-3 rounded transition-all tracking-widest text-sm uppercase"
+              class="w-full border px-6 py-3 rounded transition-all tracking-widest text-sm uppercase font-medium bg-blue-600 hover:bg-blue-700 border-blue-600 text-white dark:bg-aged/10 dark:hover:bg-aged/20 dark:border-aged/30 dark:text-aged"
             >
               Locate in Library
             </button>
@@ -50,10 +50,10 @@
         </div>
 
         <div
-          class="mt-12 text-center space-y-3 text-aged/50 text-sm leading-relaxed"
+          class="mt-12 text-center space-y-3 text-gray-600 dark:text-aged/50 text-sm leading-relaxed"
         >
           <p>The Library contains 29 symbols:</p>
-          <p class="font-mono text-aged/70">
+          <p class="font-mono text-gray-700 dark:text-aged/70">
             a b c d e f g h i j k l m n o p q r s t u v w x y z , . [space]
           </p>
           <p class="mt-6 text-xs italic">

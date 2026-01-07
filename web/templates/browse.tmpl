@@ -1,25 +1,24 @@
 <!doctype html>
 <html lang="en">
   {{ template "head" . }}
-  <body class="min-h-screen text-parchment font-mono">
+  <body class="min-h-screen font-mono text-gray-900 dark:text-parchment">
     {{ template "header" . }}
 
     <main class="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
       <div class="max-w-5xl mx-auto">
-        {{ if .error }}{{ template "errorAlert" . }}{{ end }}
-
         {{ if not .location }}
         <div class="max-w-3xl mx-auto">
-          <div class="bg-ink/50 border border-aged/20 rounded p-4 sm:p-6 md:p-8">
-            <h1 class="text-xs tracking-[0.3em] text-aged/60 uppercase mb-4 sm:mb-6">
+          <div class="border rounded p-4 sm:p-6 md:p-8 bg-white border-gray-200 shadow-sm dark:bg-ink/50 dark:border-aged/20 dark:shadow-none">
+            <h1 class="text-xs tracking-[0.3em] text-gray-700 dark:text-aged/60 uppercase mb-4 sm:mb-6 font-semibold">
               Navigate to Location
             </h1>
 
             <form action="/browse" method="POST" class="space-y-3 sm:space-y-4">
+              {{ if .error }}{{ template "errorAlert" . }}{{ end }}
               <div>
                 <label
                   for="location"
-                  class="block text-aged/50 text-xs tracking-wider mb-2"
+                  class="block text-gray-700 dark:text-aged/50 text-xs tracking-wider mb-2 font-semibold"
                 >
                   HEXAGON.WALL.SHELF.BOOK.PAGE
                 </label>
@@ -28,13 +27,13 @@
                   name="location"
                   id="location"
                   placeholder="e.g., 3a7f.2.1.15.204"
-                  class="w-full bg-ink/80 border border-aged/30 rounded px-3 py-2 sm:px-4 sm:py-3 text-parchment font-mono text-xs sm:text-sm focus:outline-none focus:border-aged/60 transition-colors placeholder-aged/30"
+                  class="w-full rounded px-3 py-2 sm:px-4 sm:py-3 font-mono text-xs sm:text-sm focus:outline-none transition-colors border bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder-gray-400 dark:bg-ink/80 dark:border-aged/30 dark:text-parchment dark:focus:border-aged/60 dark:focus:ring-aged/20 dark:placeholder-aged/30"
                   autofocus
                 />
               </div>
               <button
                 type="submit"
-                class="w-full bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-4 py-2 sm:px-6 sm:py-3 rounded transition-all tracking-widest text-xs sm:text-sm uppercase"
+                class="w-full border px-4 py-2 sm:px-6 sm:py-3 rounded transition-all tracking-widest text-xs sm:text-sm uppercase font-medium bg-blue-600 hover:bg-blue-700 border-blue-600 text-white dark:bg-aged/10 dark:hover:bg-aged/20 dark:border-aged/30 dark:text-aged"
               >
                 Navigate
               </button>
@@ -43,22 +42,22 @@
         </div>
         {{ end }} {{ if .location }}
         <div class="space-y-3 sm:space-y-4 md:space-y-6">
-          <div class="bg-ink/50 border border-aged/20 rounded p-3 sm:p-4 md:p-6">
+          <div class="border rounded p-3 sm:p-4 md:p-6 bg-white border-gray-200 shadow-sm dark:bg-ink/50 dark:border-aged/20 dark:shadow-none">
             <div class="flex items-center justify-between mb-3 sm:mb-4">
-              <p class="text-aged/40 text-xs tracking-widest uppercase">
+              <p class="text-gray-600 dark:text-aged/40 text-xs tracking-widest uppercase font-semibold">
                 Location
               </p>
               <button
                 onclick="copyLocation()"
                 id="copyBtn"
-                class="bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-2 sm:px-3 py-1 rounded transition-all text-xs tracking-wider uppercase"
+                class="border px-2 sm:px-3 py-1 rounded transition-all text-xs tracking-wider uppercase font-medium bg-gray-100 hover:bg-gray-200 border-gray-300 text-gray-700 dark:bg-aged/10 dark:hover:bg-aged/20 dark:border-aged/30 dark:text-aged"
               >
                 Copy Location
               </button>
             </div>
             <p
               id="locationText"
-              class="font-mono text-aged text-xs sm:text-sm mb-3 sm:mb-4 break-all truncate"
+              class="font-mono text-gray-700 dark:text-aged text-xs sm:text-sm mb-3 sm:mb-4 break-all truncate"
               title="{{ .location.String }}"
             >
               {{ .location.String }}
@@ -68,43 +67,43 @@
               class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 text-xs pt-3 sm:pt-4 border-t border-aged/10"
             >
               <div>
-                <span class="text-aged/40 block mb-1">Hexagon</span>
+                <span class="text-gray-500 dark:text-aged/40 block mb-1 text-xs font-semibold">Hexagon</span>
                 <span
-                  class="font-mono text-aged/80 truncate block max-w-[120px]"
+                  class="font-mono text-gray-700 dark:text-aged/80 truncate block max-w-[120px]"
                   title="{{ .location.Hexagon }}"
                   >{{ .location.Hexagon }}</span
                 >
               </div>
               <div>
-                <span class="text-aged/40 block mb-1">Wall</span>
-                <span class="font-mono text-aged/80">{{ .location.Wall }}</span>
+                <span class="text-gray-500 dark:text-aged/40 block mb-1 text-xs font-semibold">Wall</span>
+                <span class="font-mono text-gray-700 dark:text-aged/80">{{ .location.Wall }}</span>
               </div>
               <div>
-                <span class="text-aged/40 block mb-1">Shelf</span>
-                <span class="font-mono text-aged/80"
+                <span class="text-gray-500 dark:text-aged/40 block mb-1 text-xs font-semibold">Shelf</span>
+                <span class="font-mono text-aged-light dark:text-aged/80"
                   >{{ .location.Shelf }}</span
                 >
               </div>
               <div>
-                <span class="text-aged/40 block mb-1">Book</span>
-                <span class="font-mono text-aged/80">{{ .location.Book }}</span>
+                <span class="text-gray-500 dark:text-aged/40 block mb-1 text-xs font-semibold">Book</span>
+                <span class="font-mono text-gray-700 dark:text-aged/80">{{ .location.Book }}</span>
               </div>
               <div>
-                <span class="text-aged/40 block mb-1">Page</span>
-                <span class="font-mono text-aged/80">{{ .location.Page }}</span>
+                <span class="text-gray-500 dark:text-aged/40 block mb-1 text-xs font-semibold">Page</span>
+                <span class="font-mono text-gray-700 dark:text-aged/80">{{ .location.Page }}</span>
               </div>
             </div>
           </div>
 
-          <div class="bg-ink/70 border border-aged/30 rounded p-3 sm:p-4 md:p-6 lg:p-8 shadow-2xl">
+          <div class="border rounded p-3 sm:p-4 md:p-6 lg:p-8 shadow-sm bg-white border-gray-200 dark:bg-ink/70 dark:border-aged/30 dark:shadow-2xl">
             <div class="mb-2 sm:mb-3 md:mb-4 pb-2 sm:pb-3 md:pb-4 border-b border-aged/20">
-              <p class="text-aged/40 text-xs tracking-widest uppercase">
+              <p class="text-gray-600 dark:text-aged/40 text-xs tracking-widest uppercase font-semibold">
                 Page {{ .location.Page }}
               </p>
             </div>
 
-            <div class="bg-parchment/5 rounded p-2 sm:p-3 md:p-4 lg:p-6">
-              <pre class="page-content text-parchment/90">{{ .displayContent }}</pre>
+            <div class="rounded p-2 sm:p-3 md:p-4 lg:p-6 bg-gray-50 dark:bg-parchment/5">
+              <pre class="page-content text-gray-900 dark:text-parchment/90">{{ .displayContent }}</pre>
             </div>
           </div>
 
@@ -113,14 +112,14 @@
               <input type="hidden" name="location" value="{{ .prevLocation.String }}" />
               <button
                 type="submit"
-                class="bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-4 py-2 sm:px-6 sm:py-2.5 rounded transition-all tracking-wider text-xs sm:text-sm uppercase"
+                class="border px-4 py-2 sm:px-6 sm:py-2.5 rounded transition-all tracking-wider text-xs sm:text-sm uppercase font-medium bg-gray-100 hover:bg-gray-200 border-gray-300 text-gray-700 dark:bg-aged/10 dark:hover:bg-aged/20 dark:border-aged/30 dark:text-aged"
               >
                 ← Previous
               </button>
             </form>
 
             <form action="/browse" method="POST" class="flex items-center gap-2">
-              <span class="text-aged/50 text-xs">Page</span>
+              <span class="text-gray-600 dark:text-aged/50 text-xs font-medium">Page</span>
               <input
                 type="number"
                 id="pageInput"
@@ -128,16 +127,16 @@
                 min="1"
                 max="410"
                 placeholder="{{ .location.Page }}"
-                class="w-16 bg-ink/80 border border-aged/30 rounded px-2 py-2 text-parchment font-mono text-xs text-center focus:outline-none focus:border-aged/60 transition-colors"
+                class="w-16 rounded px-2 py-2 font-mono text-xs text-center focus:outline-none transition-colors border bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:bg-ink/80 dark:border-aged/30 dark:text-parchment dark:focus:border-aged/60 dark:focus:ring-aged/20"
               />
-              <span class="text-aged/50 text-xs">/ 410</span>
+              <span class="text-gray-600 dark:text-aged/50 text-xs font-medium">/ 410</span>
               <input type="hidden" name="hexagon" value="{{ .location.Hexagon }}" />
               <input type="hidden" name="wall" value="{{ .location.Wall }}" />
               <input type="hidden" name="shelf" value="{{ .location.Shelf }}" />
               <input type="hidden" name="book" value="{{ .location.Book }}" />
               <button
                 type="submit"
-                class="bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-3 py-2 rounded transition-all text-xs uppercase"
+                class="border px-3 py-2 rounded transition-all text-xs uppercase font-medium bg-blue-600 hover:bg-blue-700 border-blue-600 text-white dark:bg-aged/10 dark:hover:bg-aged/20 dark:border-aged/30 dark:text-aged"
               >
                 Go
               </button>
@@ -147,7 +146,7 @@
               <input type="hidden" name="location" value="{{ .nextLocation.String }}" />
               <button
                 type="submit"
-                class="bg-aged/10 hover:bg-aged/20 border border-aged/30 text-aged px-4 py-2 sm:px-6 sm:py-2.5 rounded transition-all tracking-wider text-xs sm:text-sm uppercase"
+                class="border px-4 py-2 sm:px-6 sm:py-2.5 rounded transition-all tracking-wider text-xs sm:text-sm uppercase font-medium bg-gray-100 hover:bg-gray-200 border-gray-300 text-gray-700 dark:bg-aged/10 dark:hover:bg-aged/20 dark:border-aged/30 dark:text-aged"
               >
                 Next →
               </button>
@@ -157,14 +156,14 @@
           <div class="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0 pt-3 sm:pt-4 border-t border-aged/10">
             <a
               href="/search"
-              class="text-aged/60 hover:text-aged transition-colors text-xs sm:text-sm tracking-wider"
+              class="text-gray-600 hover:text-gray-900 dark:text-aged/60 dark:hover:text-aged transition-colors text-xs sm:text-sm tracking-wider"
             >
               ← Return to Search
             </a>
 
             <a
               href="/"
-              class="text-aged/60 hover:text-aged transition-colors text-xs sm:text-sm tracking-wider"
+              class="text-gray-600 hover:text-gray-900 dark:text-aged/60 dark:hover:text-aged transition-colors text-xs sm:text-sm tracking-wider"
             >
               Return to Library Entrance
             </a>
