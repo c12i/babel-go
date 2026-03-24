@@ -23,7 +23,7 @@ type Location struct {
 }
 
 // Get Location from a period separated string: "<hexagon>.<wall>.<shelf>.<book>.<page>"
-func LocationFromString(address string) (*Location, error) {
+func NewFromString(address string) (*Location, error) {
 	parts := strings.Split(address, ".")
 	if partsLen := len(parts); partsLen != 5 {
 		return nil, fmt.Errorf("address is not of valid length, expected %d, got %d", 5, partsLen)
@@ -66,7 +66,7 @@ func LocationFromString(address string) (*Location, error) {
 }
 
 // Determine a Location's given its big Int representation
-func locationFromBase29Number(n *big.Int) *Location {
+func newFromBase29Number(n *big.Int) *Location {
 	temp, quotient := new(big.Int).Abs(n), new(big.Int)
 
 	// get page
@@ -250,7 +250,7 @@ func (l Location) Previous() *Location {
 }
 
 // Random generates a random location in the library
-func RandomLocation() *Location {
+func Random() *Location {
 	// Generate random base36 string of random length
 	hexagonLen := rand.Intn(maxHexagonCharSize) + 1 //nolint: gosec
 	hexagon := make([]byte, hexagonLen)

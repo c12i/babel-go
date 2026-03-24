@@ -52,7 +52,7 @@ type BrowseCmd struct {
 }
 
 func (s *BrowseCmd) Run(ctx *Context) error {
-	location, err := library.LocationFromString(s.Address)
+	location, err := library.NewFromString(s.Address)
 	if err != nil {
 		return err
 	}
@@ -60,32 +60,32 @@ func (s *BrowseCmd) Run(ctx *Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%s", pageContent)
+	fmt.Println(pageContent)
 	return nil
 }
 
 func (r *RandomCmd) Run(ctx *Context) error {
-	location := library.RandomLocation()
+	location := library.Random()
 	if r.Browse {
 		pageContent, err := ctx.Library.Browse(location)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("%s", pageContent)
+		fmt.Println(pageContent)
 	} else {
-		fmt.Printf("%s\n", location.String())
+		fmt.Println(location.String())
 	}
 	return nil
 }
 
 func main() {
-	ctx := kong.Parse(
+	cli := kong.Parse(
 		&CLI,
 		kong.Name("babel"),
 		kong.Description("Library of Babel CLI - Search and browse the infinite library"),
 		kong.UsageOnError(),
 	)
-	err := ctx.Run(&Context{Library: library.NewLibrary()})
+	err := cli.Run(&Context{Library: library.NewLibrary()})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)

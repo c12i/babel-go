@@ -54,7 +54,7 @@ func (l Library) Search(text string) (*Location, error) {
 	if err != nil {
 		return nil, err
 	}
-	location := locationFromBase29Number(bigInt)
+	location := newFromBase29Number(bigInt)
 	return location, nil
 }
 
@@ -74,7 +74,7 @@ func (l Library) SearchStream(text string) (<-chan *Location, error) {
 				if err != nil {
 					continue
 				}
-				location := locationFromBase29Number(bigInt)
+				location := newFromBase29Number(bigInt)
 				locationChan <- location
 			}
 		})
@@ -124,7 +124,7 @@ func (l Library) SearchPaginated(text string, offset, limit int) ([]*Location, e
 			return nil, fmt.Errorf("error generating location for variant %d: %w", variant, err)
 		}
 
-		location := locationFromBase29Number(bigInt)
+		location := newFromBase29Number(bigInt)
 		locations = append(locations, location)
 	}
 

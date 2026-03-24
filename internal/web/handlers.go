@@ -120,7 +120,7 @@ func (h *Handler) Browse(c *gin.Context) {
 		return
 	}
 
-	location, err := library.LocationFromString(locationStr)
+	location, err := library.NewFromString(locationStr)
 	if err != nil {
 		h.logger.Printf("invalid location: %s - %v", locationStr, err)
 		c.HTML(http.StatusBadRequest, "browse.tmpl", gin.H{
@@ -202,7 +202,7 @@ func highlightText(content, query string) string {
 
 func (h *Handler) RandomPage(c *gin.Context) {
 	h.logger.Println("generating random page")
-	location := library.RandomLocation()
+	location := library.Random()
 
 	h.logger.Printf("random location: %s", location.String())
 
