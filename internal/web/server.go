@@ -43,7 +43,7 @@ func NewServer(handler *Handler, logger *log.Logger) *Server {
 				if i > 0 && (len(str)-i)%3 == 0 {
 					result = append(result, ',')
 				}
-				result = append(result, byte(digit))
+				result = append(result, byte(digit)) // nolint: gosec
 			}
 			return string(result)
 		},

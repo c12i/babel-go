@@ -10,8 +10,8 @@ import (
 	TESTING string address --> Location
 */
 
-func TestLocationFromValidString(t *testing.T) {
-	location, err := LocationFromString(fmt.Sprintf("%s.2.1.12.30", big.NewInt(0).Text(36)))
+func TestNewFromValidString(t *testing.T) {
+	location, err := NewFromString(fmt.Sprintf("%s.2.1.12.30", big.NewInt(0).Text(36)))
 	if err != nil {
 		t.Errorf("failed to create location from: %v", location)
 	}
@@ -27,9 +27,9 @@ func TestLocationFromValidString(t *testing.T) {
 	}
 }
 
-func TestLocationFromLongAndShortAddressStrings(t *testing.T) {
+func TestNewFromLongAndShortAddressStrings(t *testing.T) {
 	// Too short
-	_, err := LocationFromString(
+	_, err := NewFromString(
 		fmt.Sprintf("%s.2.1", big.NewInt(0).Text(36)),
 	) // missing book and page
 	if err == nil {
@@ -37,7 +37,7 @@ func TestLocationFromLongAndShortAddressStrings(t *testing.T) {
 	}
 
 	// Too long
-	_, err2 := LocationFromString(
+	_, err2 := NewFromString(
 		fmt.Sprintf("%s.2.1.12.30.34.39.29", big.NewInt(0).Text(36)),
 	) // missing book and page
 	if err2 == nil {
@@ -45,69 +45,69 @@ func TestLocationFromLongAndShortAddressStrings(t *testing.T) {
 	}
 }
 
-func TestLocationFromInvalidHexagonString(t *testing.T) {
+func TestNewFromInvalidHexagonString(t *testing.T) {
 	invalidChars := "!@#$%^&*()_+-=[]{}|;':\"<>?,./~` "
 
 	for _, ch := range invalidChars {
 		input := fmt.Sprintf("hello%c.2.1.12.30", ch)
-		_, err := LocationFromString(input)
+		_, err := NewFromString(input)
 		if err == nil {
 			t.Errorf("got nil, expected err for input %s", input)
 		}
 	}
 }
 
-func TestLocationFromStringWithInvalidWallValue(t *testing.T) {
+func TestNewFromStringWithInvalidWallValue(t *testing.T) {
 	// Too big
-	_, err := LocationFromString(fmt.Sprintf("%s.30.1.12.30", big.NewInt(0).Text(36)))
+	_, err := NewFromString(fmt.Sprintf("%s.30.1.12.30", big.NewInt(0).Text(36)))
 	if err == nil {
 		t.Errorf("got nil, expected err")
 	}
 
 	// Too small
-	_, err2 := LocationFromString(fmt.Sprintf("%s.-30.1.12.30", big.NewInt(0).Text(36)))
+	_, err2 := NewFromString(fmt.Sprintf("%s.-30.1.12.30", big.NewInt(0).Text(36)))
 	if err2 == nil {
 		t.Errorf("got nil, expected err")
 	}
 }
 
-func TestLocationFromStringWithInvalidShelfValue(t *testing.T) {
+func TestNewFromStringWithInvalidShelfValue(t *testing.T) {
 	// Too big
-	_, err := LocationFromString(fmt.Sprintf("%s.2.50.12.30", big.NewInt(0).Text(36)))
+	_, err := NewFromString(fmt.Sprintf("%s.2.50.12.30", big.NewInt(0).Text(36)))
 	if err == nil {
 		t.Errorf("got nil, expected err")
 	}
 
 	// Too small
-	_, err2 := LocationFromString(fmt.Sprintf("%s.2.-12.12.30", big.NewInt(0).Text(36)))
+	_, err2 := NewFromString(fmt.Sprintf("%s.2.-12.12.30", big.NewInt(0).Text(36)))
 	if err2 == nil {
 		t.Errorf("got nil, expected err")
 	}
 }
 
-func TestLocationFromStringWithInvalidBookValue(t *testing.T) {
+func TestNewFromStringWithInvalidBookValue(t *testing.T) {
 	// Too big
-	_, err := LocationFromString(fmt.Sprintf("%s.2.1.64.30", big.NewInt(0).Text(36)))
+	_, err := NewFromString(fmt.Sprintf("%s.2.1.64.30", big.NewInt(0).Text(36)))
 	if err == nil {
 		t.Errorf("got nil, expected err")
 	}
 
 	// Too small
-	_, err2 := LocationFromString(fmt.Sprintf("%s.2.1.-12.30", big.NewInt(0).Text(36)))
+	_, err2 := NewFromString(fmt.Sprintf("%s.2.1.-12.30", big.NewInt(0).Text(36)))
 	if err2 == nil {
 		t.Errorf("got nil, expected err")
 	}
 }
 
-func TestLocationFromStringWithInvalidPageValue(t *testing.T) {
+func TestNewFromStringWithInvalidPageValue(t *testing.T) {
 	// Too big
-	_, err := LocationFromString(fmt.Sprintf("%s.2.1.12.599", big.NewInt(0).Text(36)))
+	_, err := NewFromString(fmt.Sprintf("%s.2.1.12.599", big.NewInt(0).Text(36)))
 	if err == nil {
 		t.Errorf("got nil, expected err")
 	}
 
 	// Too small
-	_, err2 := LocationFromString(fmt.Sprintf("%s.2.1.12.-39", big.NewInt(0).Text(36)))
+	_, err2 := NewFromString(fmt.Sprintf("%s.2.1.12.-39", big.NewInt(0).Text(36)))
 	if err2 == nil {
 		t.Errorf("got nil, expected err")
 	}
@@ -117,7 +117,7 @@ func TestLocationFromStringWithInvalidPageValue(t *testing.T) {
 	TESTING Location <---> big.Int conversion
 */
 
-func TestGetLocationFromBigInt(t *testing.T) {
+func TestGetNewFromBigInt(t *testing.T) {
 	library := NewLibrary()
 
 	originalNum, err := library.generateBase29Number("Hello world", 0)
@@ -125,7 +125,7 @@ func TestGetLocationFromBigInt(t *testing.T) {
 		t.Errorf("failed to base29 encode: %v", err)
 	}
 
-	location := locationFromBase29Number(originalNum)
+	location := newFromBase29Number(originalNum)
 	number, err := location.ToBigInt()
 	if err != nil {
 		t.Errorf("location to big.Int conversion failed: %v", err)
@@ -142,7 +142,7 @@ func TestGetLocationWithInvalidHexagonString(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to base29 encode: %v", err)
 	}
-	location := locationFromBase29Number(number)
+	location := newFromBase29Number(number)
 	location.Hexagon = "invalid base32 string"
 	_, err2 := location.ToBigInt()
 	if err2 == nil {
