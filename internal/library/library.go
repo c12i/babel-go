@@ -1,6 +1,7 @@
 package library
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/binary"
 	"errors"
@@ -58,7 +59,7 @@ func (l Library) Search(text string) (*Location, error) {
 	return location, nil
 }
 
-func (l Library) SearchStream(text string) (<-chan *Location, error) {
+func (l Library) SearchStream(ctx context.Context, text string) (<-chan *Location, error) {
 	totalCount := l.GetOccurrenceCount(text)
 	// location and job worker channel
 	locationChan, workerChan := make(chan *Location), make(chan int, 100)
@@ -67,27 +68,44 @@ func (l Library) SearchStream(text string) (<-chan *Location, error) {
 	var wg sync.WaitGroup
 
 	for range numWorkers {
-		wg.Go(func() {
-			// each worker processes multiple variants
-			for variant := range workerChan {
-				bigInt, err := l.generateBase29Number(text, variant)
-				if err != nil {
-					continue
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case variant, ok := <-workerChan:
+					if !ok {
+						return
+					}
+					bigInt, err := l.generateBase29Number(text, variant)
+					if err != nil {
+						continue
+					}
+					location := newFromBase29Number(bigInt)
+
+					select {
+					case locationChan <- location:
+					case <-ctx.Done():
+						return
+					}
 				}
-				location := newFromBase29Number(bigInt)
-				locationChan <- location
 			}
-		})
+		}()
 	}
 
 	// send jobs and close channels
 	go func() {
 		defer close(workerChan)
 		for variant := range totalCount {
-			workerChan <- variant
+			select {
+			case workerChan <- variant:
+			case <-ctx.Done():
+				return
+			}
 		}
 	}()
-
 	// close results when workers finish
 	go func() {
 		defer close(locationChan)

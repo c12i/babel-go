@@ -1,6 +1,7 @@
 package library
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"testing"
@@ -14,16 +15,22 @@ TESTING core library of babel API
 
 func TestLibrarySearchStream(t *testing.T) {
 	library := NewLibrary()
-	results, err := library.SearchStream(searchText)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	results, err := library.SearchStream(ctx, searchText)
 	if err != nil {
 		t.Errorf("search stream failed: %v", err)
 	}
+
 	locations := []*Location{}
 	limit := 100
 	for range limit {
 		location := <-results
 		locations = append(locations, location)
 	}
+	cancel()
+
 	if l := len(locations); l != limit {
 		t.Errorf("expected %d locations, got %d", limit, l)
 	}
