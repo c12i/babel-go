@@ -68,9 +68,7 @@ func (l Library) SearchStream(ctx context.Context, text string) (<-chan *Locatio
 	var wg sync.WaitGroup
 
 	for range numWorkers {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			for {
 				select {
 				case <-ctx.Done():
@@ -92,7 +90,7 @@ func (l Library) SearchStream(ctx context.Context, text string) (<-chan *Locatio
 					}
 				}
 			}
-		}()
+		})
 	}
 
 	// send jobs and close channels
