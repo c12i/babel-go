@@ -75,7 +75,8 @@ func (l Library) SearchStream(ctx context.Context, text string) (<-chan *Locatio
 					return
 				case variant, ok := <-workerChan:
 					if !ok {
-						return
+						workerChan = nil
+						continue
 					}
 					bigInt, err := l.generateBase29Number(text, variant)
 					if err != nil {
