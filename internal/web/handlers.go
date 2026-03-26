@@ -60,7 +60,7 @@ func (h *Handler) SearchPost(c *gin.Context) {
 
 	h.logger.Printf("searching for: %q (page %d)", text, page)
 
-	const resultsPerPage = 20
+	const resultsPerPage = 10
 	offset := (page - 1) * resultsPerPage
 
 	locations, err := h.lib.SearchPaginated(text, offset, resultsPerPage)
