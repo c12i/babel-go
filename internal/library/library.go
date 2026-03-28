@@ -34,7 +34,7 @@ type Library struct {
 }
 
 // Build the Library
-func NewLibrary() *Library {
+func New() *Library {
 	charset := " abcdefghijklmnopqrstuvwxyz,."
 	charToIndex := map[rune]int{}
 

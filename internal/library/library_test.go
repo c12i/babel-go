@@ -14,7 +14,7 @@ TESTING core library of babel API
 */
 
 func TestLibrarySearchStream(t *testing.T) {
-	library := NewLibrary()
+	library := New()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -40,7 +40,7 @@ func TestLibrarySearchStream(t *testing.T) {
 }
 
 func TestLibrarySearchPagintated(t *testing.T) {
-	library := NewLibrary()
+	library := New()
 	limit, offset := 50, 0
 	results, err := library.SearchPaginated(searchText, offset, limit)
 	if err != nil {
@@ -66,7 +66,7 @@ func TestLibrarySearchPagintated(t *testing.T) {
 }
 
 func TestLibrarySearchPaginatedWithInvalidLimit(t *testing.T) {
-	library := NewLibrary()
+	library := New()
 	limit, offset := -50, 0
 	_, err := library.SearchPaginated(searchText, offset, limit)
 	if err == nil {
@@ -75,7 +75,7 @@ func TestLibrarySearchPaginatedWithInvalidLimit(t *testing.T) {
 }
 
 func TestLibrarySearchPaginatedWithInvalidOffset(t *testing.T) {
-	library := NewLibrary()
+	library := New()
 	limit, offset := 50, -50
 	_, err := library.SearchPaginated(searchText, offset, limit)
 	if err == nil {
@@ -100,7 +100,7 @@ func assertSearchedLocations(library *Library, locations []*Location) error {
 TESTING Base29 encode and decoding
 */
 func TestLibraryBase29EncodeAndDecode(t *testing.T) {
-	library := NewLibrary()
+	library := New()
 	num, err := library.generateBase29Number(searchText, 0)
 	if err != nil {
 		t.Errorf("failed to encode text: %v", err)
@@ -116,7 +116,7 @@ func TestLibraryBase29EncodeAndDecode(t *testing.T) {
 }
 
 func TestLibraryBase29EmptyString(t *testing.T) {
-	library := NewLibrary()
+	library := New()
 	_, error := library.generateBase29Number("", 0)
 
 	if error == nil {
@@ -126,7 +126,7 @@ func TestLibraryBase29EmptyString(t *testing.T) {
 
 func TestLibraryBase29EncodeLongText(t *testing.T) {
 	text := strings.Repeat("hello", 1000)
-	library := NewLibrary()
+	library := New()
 	_, error := library.generateBase29Number(text, 0)
 
 	if error == nil {
@@ -135,7 +135,7 @@ func TestLibraryBase29EncodeLongText(t *testing.T) {
 }
 
 func TestLibraryBase29EncodeInvalidChars(t *testing.T) {
-	library := NewLibrary()
+	library := New()
 	invalidChars := "!@#$%^&*()_+-=[]{}|;':\"<>?/~`"
 
 	for _, char := range invalidChars {

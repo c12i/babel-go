@@ -52,7 +52,7 @@ type BrowseCmd struct {
 }
 
 func (s *BrowseCmd) Run(ctx *Context) error {
-	location, err := library.NewFromString(s.Address)
+	location, err := library.NewLocationFromString(s.Address)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ func main() {
 		kong.Description("Library of Babel CLI - Search and browse the infinite library"),
 		kong.UsageOnError(),
 	)
-	err := cli.Run(&Context{Library: library.NewLibrary()})
+	err := cli.Run(&Context{Library: library.New()})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)

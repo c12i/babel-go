@@ -120,7 +120,7 @@ func (h *Handler) Browse(c *gin.Context) {
 		return
 	}
 
-	location, err := library.NewFromString(locationStr)
+	location, err := library.NewLocationFromString(locationStr)
 	if err != nil {
 		h.logger.Printf("invalid location: %s - %v", locationStr, err)
 		c.HTML(http.StatusBadRequest, "browse.tmpl", gin.H{

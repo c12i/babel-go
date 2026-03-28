@@ -23,7 +23,7 @@ type Location struct {
 }
 
 // Get Location from a period separated string: "<hexagon>.<wall>.<shelf>.<book>.<page>"
-func NewFromString(address string) (*Location, error) {
+func NewLocationFromString(address string) (*Location, error) {
 	parts := strings.Split(address, ".")
 	if partsLen := len(parts); partsLen != 5 {
 		return nil, fmt.Errorf("address is not of valid length, expected %d, got %d", 5, partsLen)

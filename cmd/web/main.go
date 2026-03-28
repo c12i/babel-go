@@ -10,7 +10,7 @@ import (
 
 func main() {
 	logger := log.New(os.Stdout, "[BABEL] ", log.Ldate|log.Ltime|log.Lshortfile)
-	library := library.NewLibrary()
+	library := library.New()
 
 	server := web.NewServer(
 		web.NewHandler(library, logger),
