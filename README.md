@@ -28,4 +28,12 @@ Core API allows a user to:
 
 You can interact with the program via [web app](https://babel.c12i.xyz) and a very simple [CLI](./cmd/cli/main.go)
 
+## Local Development
+
+Run the web server with [air](https://github.com/air-verse/air)
+
+```bash
+air
+```
+
 contact: [`hello@collinsmuriuki.xyz`](mailto:hello@collinsmuriuki.xyz)
