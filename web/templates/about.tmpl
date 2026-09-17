@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  {{ template "head" . }}
+  <body class="flex min-h-screen flex-col">
+    {{ template "header" . }}
+
+    <main class="page-shell">
+      <article class="mx-auto w-full max-w-2xl self-center">
+        <h1 class="page-title">About the Library</h1>
+        <p class="mt-6 text-base leading-8 text-[#656762] sm:text-lg">
+          The Library of Babel is a short story by Jorge Luis Borges about an
+          infinite library containing every possible book. Not just books that
+          exist, but every combination of characters that could exist.
+        </p>
+
+        <ul class="mt-8 space-y-3 border-l border-[#d1d1ce] pl-6 text-base leading-7 text-[#40433f]">
+          <li>Your biography (that hasn't been written yet)</li>
+          <li>This exact documentation</li>
+          <li>Complete nonsense</li>
+          <li>Shakespeare's works</li>
+        </ul>
+
+        <div class="mt-10 space-y-2 text-sm text-[#777974]">
+          <p>
+            Read about
+            <a
+              href="https://en.wikipedia.org/wiki/The_Library_of_Babel"
+              target="_blank"
+              rel="noopener"
+              class="text-link"
+            >the original story</a>.
+          </p>
+          <p>
+            Read
+            <a
+              href="https://collinsmuriuki.xyz/building-the-library-of-babel-in-go/"
+              target="_blank"
+              rel="noopener"
+              class="text-link"
+            >how this implementation works</a>.
+          </p>
+        </div>
+      </article>
+    </main>
+
+    {{ template "footer" . }}
+  </body>
+</html>

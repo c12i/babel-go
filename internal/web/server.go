@@ -80,7 +80,7 @@ func NewServer(handler *Handler, logger *log.Logger) *Server {
 
 	// library routes
 	router.GET("/", handler.Home)
-	router.GET("/search", handler.SearchForm)
+	router.GET("/about", handler.About)
 	router.POST("/search", handler.SearchPost)
 	router.GET("/browse", handler.BrowseForm)
 	router.POST("/browse", handler.Browse)

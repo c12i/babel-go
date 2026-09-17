@@ -1,66 +1,45 @@
 <!doctype html>
 <html lang="en">
   {{ template "head" . }}
-  <body class="min-h-screen font-mono text-gray-900 dark:text-parchment">
+  <body class="flex min-h-screen flex-col">
     {{ template "header" . }}
 
-    <main class="container mx-auto px-4 py-12">
-      <div class="max-w-4xl mx-auto">
-        <div class="border rounded p-8 mb-8 bg-white border-gray-200 shadow-sm dark:bg-ink/50 dark:border-aged/20 dark:shadow-none">
-          <h1 class="text-xs tracking-[0.3em] text-gray-700 dark:text-aged/60 uppercase mb-6 font-semibold">Search</h1>
-
-          <form action="/search" method="POST" class="space-y-4">
-            {{ if .error }}{{ template "errorAlert" . }}{{ end }}
-            <textarea
-              name="text"
-              rows="6"
-              maxlength="3200"
-              placeholder="Enter text to search..."
-              class="w-full rounded px-4 py-3 font-mono text-sm focus:outline-none transition-colors border bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 placeholder-gray-400 dark:bg-ink/80 dark:border-aged/30 dark:text-parchment dark:focus:border-aged/60 dark:focus:ring-aged/20 dark:placeholder-aged/30"
-            >{{ .query }}</textarea>
-
-            <button
-              type="submit"
-              class="w-full border px-6 py-3 rounded transition-all tracking-widest text-sm uppercase font-medium bg-blue-600 hover:bg-blue-700 border-blue-600 text-white dark:bg-aged/10 dark:hover:bg-aged/20 dark:border-aged/30 dark:text-aged"
-            >
-              Search
-            </button>
-          </form>
+    <main class="page-shell">
+      <div class="mx-auto w-full max-w-3xl">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <h1 class="page-title">Search results</h1>
+            <p class="mt-2 text-sm text-[#777974]">
+              About {{ formatNumber .total }} matching pages
+            </p>
+          </div>
+          <a href="/" class="text-link shrink-0 text-sm">New search</a>
         </div>
 
         {{ if .locations }}
-        <div class="space-y-6">
-          <div class="text-center py-6">
-            <p class="text-gray-600 dark:text-aged/60 text-sm">
-              <span class="text-gray-900 dark:text-aged text-2xl font-light">~{{ formatNumber .total }}</span>
-            </p>
-            <p class="text-gray-500 dark:text-aged/40 text-xs tracking-widest uppercase mt-2">
-              occurrences found (~{{ toPowerOf2  .total }})
-            </p>
-          </div>
+        <section class="mt-8 border-t border-[#e2e0da] pt-6">
+          <p class="mb-4 text-sm text-[#777974]">
+            Page {{ .currentPage }} of {{ formatNumber .totalPages }}
+          </p>
 
-          <div class="space-y-2">
-            <p class="text-gray-600 dark:text-aged/50 text-xs tracking-widest uppercase mb-4 font-semibold">
-              Page {{ .currentPage }} of {{ formatNumber .totalPages }}
-            </p>
-
+          <div class="overflow-hidden rounded-md border border-[#deddd7] bg-white divide-y divide-[#eceae5]">
             {{ range .locations }}
-            <div
-              class="border transition-colors rounded bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm dark:bg-ink/30 dark:border-aged/10 dark:hover:border-aged/30 dark:hover:shadow-none"
-            >
-              <form action="/browse" method="POST" class="w-full">
-                <input type="hidden" name="location" value="{{ .String }}" />
-                <input type="hidden" name="query" value="{{ $.query }}" />
-                <button type="submit" class="location-link px-4 py-3 text-xs truncate" title="{{ .String }}">
-                  {{ .String }}
-                </button>
-              </form>
-            </div>
+            <form action="/browse" method="POST">
+              <input type="hidden" name="location" value="{{ .String }}" />
+              <input type="hidden" name="query" value="{{ $.query }}" />
+              <button type="submit" class="location-link" title="{{ .String }}">
+                {{ .String }}
+              </button>
+            </form>
             {{ end }}
           </div>
 
           {{ template "paginationControls" . }}
-        </div>
+        </section>
+        {{ else }}
+        <p class="mt-8 border-t border-[#e2e0da] pt-6 text-[#777974]">
+          No matching pages were found.
+        </p>
         {{ end }}
       </div>
     </main>

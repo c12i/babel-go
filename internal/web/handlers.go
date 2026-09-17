@@ -26,17 +26,17 @@ func NewHandler(lib *library.Library, logger *log.Logger) *Handler {
 	}
 }
 
-func (h *Handler) SearchForm(c *gin.Context) {
-	c.HTML(http.StatusOK, "search.tmpl", gin.H{
-		"title": "Search",
-	})
-}
-
 func (h *Handler) Home(c *gin.Context) {
 	h.logger.Println("serving home page")
 
 	c.HTML(http.StatusOK, "home.tmpl", gin.H{
 		"title": "Library of Babel",
+	})
+}
+
+func (h *Handler) About(c *gin.Context) {
+	c.HTML(http.StatusOK, "about.tmpl", gin.H{
+		"title": "About",
 	})
 }
 
@@ -46,8 +46,8 @@ func (h *Handler) SearchPost(c *gin.Context) {
 
 	if text == "" {
 		h.logger.Println("empty search query")
-		c.HTML(http.StatusBadRequest, "search.tmpl", gin.H{
-			"title": "Search",
+		c.HTML(http.StatusBadRequest, "home.tmpl", gin.H{
+			"title": "Library of Babel",
 			"error": "Please enter text to search",
 		})
 		return
@@ -66,9 +66,10 @@ func (h *Handler) SearchPost(c *gin.Context) {
 	locations, err := h.lib.SearchPaginated(text, offset, resultsPerPage)
 	if err != nil {
 		h.logger.Printf("search failed: %v", err)
-		c.HTML(http.StatusInternalServerError, "search.tmpl", gin.H{
-			"title": "Search",
+		c.HTML(http.StatusInternalServerError, "home.tmpl", gin.H{
+			"title": "Library of Babel",
 			"error": "Search failed",
+			"query": text,
 		})
 		return
 	}

@@ -1,14 +1,10 @@
 {{ define "paginationControls" }}
-<div class="flex justify-center items-center gap-3 pt-6">
+<div class="flex flex-wrap items-center justify-center gap-3 pt-6">
   <form action="/search" method="POST">
     <input type="hidden" name="text" value="{{ .query }}" />
     <input type="hidden" name="page" value="{{ sub .currentPage 1 }}" />
-    <button
-      type="submit"
-      {{ if not .hasPrev }}disabled{{ end }}
-      class="border px-4 py-2 rounded transition-all text-xs disabled:cursor-not-allowed font-medium bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 border-gray-300 disabled:border-gray-200 text-gray-700 disabled:text-gray-400 dark:bg-aged/10 dark:hover:bg-aged/20 dark:disabled:bg-aged/5 dark:border-aged/30 dark:disabled:border-aged/20 dark:text-aged dark:disabled:text-aged/30"
-    >
-      ←
+    <button type="submit" {{ if not .hasPrev }}disabled{{ end }} class="secondary-button" aria-label="Previous page">
+      &larr; Previous
     </button>
   </form>
 
@@ -20,26 +16,18 @@
       min="1"
       max="{{ .totalPages }}"
       placeholder="{{ .currentPage }}"
-      class="w-16 rounded px-2 py-2 font-mono text-xs text-center focus:outline-none transition-colors border bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:bg-ink/80 dark:border-aged/30 dark:text-parchment dark:focus:border-aged/60 dark:focus:ring-aged/20"
+      aria-label="Page number"
+      class="text-field w-16 px-2 py-2 text-center text-sm"
     />
-    <span class="text-gray-600 dark:text-aged/50 text-xs font-medium">/ {{ formatNumber .totalPages }}</span>
-    <button
-      type="submit"
-      class="border px-3 py-2 rounded transition-all text-xs font-medium bg-blue-600 hover:bg-blue-700 border-blue-600 text-white dark:bg-aged/10 dark:hover:bg-aged/20 dark:border-aged/30 dark:text-aged"
-    >
-      Go
-    </button>
+    <span class="text-sm text-[#777974]">of {{ formatNumber .totalPages }}</span>
+    <button type="submit" class="secondary-button px-3">Go</button>
   </form>
 
   <form action="/search" method="POST">
     <input type="hidden" name="text" value="{{ .query }}" />
     <input type="hidden" name="page" value="{{ add .currentPage 1 }}" />
-    <button
-      type="submit"
-      {{ if not .hasNext }}disabled{{ end }}
-      class="border px-4 py-2 rounded transition-all text-xs disabled:cursor-not-allowed font-medium bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 border-gray-300 disabled:border-gray-200 text-gray-700 disabled:text-gray-400 dark:bg-aged/10 dark:hover:bg-aged/20 dark:disabled:bg-aged/5 dark:border-aged/30 dark:disabled:border-aged/20 dark:text-aged dark:disabled:text-aged/30"
-    >
-      →
+    <button type="submit" {{ if not .hasNext }}disabled{{ end }} class="secondary-button" aria-label="Next page">
+      Next &rarr;
     </button>
   </form>
 </div>
