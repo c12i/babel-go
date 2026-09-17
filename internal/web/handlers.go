@@ -14,6 +14,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	homePageTitle    = "Library of Babel"
+	browsePageTitle  = "Browse"
+	titleTemplateKey = "title"
+	errorTemplateKey = "error"
+)
+
 type Handler struct {
 	lib    *library.Library
 	logger *log.Logger
@@ -30,13 +37,13 @@ func (h *Handler) Home(c *gin.Context) {
 	h.logger.Println("serving home page")
 
 	c.HTML(http.StatusOK, "home.tmpl", gin.H{
-		"title": "Library of Babel",
+		titleTemplateKey: homePageTitle,
 	})
 }
 
 func (h *Handler) About(c *gin.Context) {
 	c.HTML(http.StatusOK, "about.tmpl", gin.H{
-		"title": "About",
+		titleTemplateKey: "About",
 	})
 }
 
@@ -47,8 +54,8 @@ func (h *Handler) SearchPost(c *gin.Context) {
 	if text == "" {
 		h.logger.Println("empty search query")
 		c.HTML(http.StatusBadRequest, "home.tmpl", gin.H{
-			"title": "Library of Babel",
-			"error": "Please enter text to search",
+			titleTemplateKey: homePageTitle,
+			errorTemplateKey: "Please enter text to search",
 		})
 		return
 	}
@@ -67,9 +74,9 @@ func (h *Handler) SearchPost(c *gin.Context) {
 	if err != nil {
 		h.logger.Printf("search failed: %v", err)
 		c.HTML(http.StatusInternalServerError, "home.tmpl", gin.H{
-			"title": "Library of Babel",
-			"error": "Search failed",
-			"query": text,
+			titleTemplateKey: homePageTitle,
+			errorTemplateKey: "Search failed",
+			"query":          text,
 		})
 		return
 	}
@@ -78,20 +85,20 @@ func (h *Handler) SearchPost(c *gin.Context) {
 	totalPages := (totalCount + resultsPerPage - 1) / resultsPerPage
 
 	c.HTML(http.StatusOK, "search.tmpl", gin.H{
-		"title":       "Search Results",
-		"query":       text,
-		"locations":   locations,
-		"total":       totalCount,
-		"currentPage": page,
-		"totalPages":  totalPages,
-		"hasNext":     page < totalPages,
-		"hasPrev":     page > 1,
+		titleTemplateKey: "Search Results",
+		"query":          text,
+		"locations":      locations,
+		"total":          totalCount,
+		"currentPage":    page,
+		"totalPages":     totalPages,
+		"hasNext":        page < totalPages,
+		"hasPrev":        page > 1,
 	})
 }
 
 func (h *Handler) BrowseForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "browse.tmpl", gin.H{
-		"title": "Browse",
+		titleTemplateKey: browsePageTitle,
 	})
 }
 
@@ -115,8 +122,8 @@ func (h *Handler) Browse(c *gin.Context) {
 	if locationStr == "" {
 		h.logger.Println("no location provided")
 		c.HTML(http.StatusBadRequest, "browse.tmpl", gin.H{
-			"title": "Browse",
-			"error": "No location specified",
+			titleTemplateKey: browsePageTitle,
+			errorTemplateKey: "No location specified",
 		})
 		return
 	}
@@ -125,8 +132,8 @@ func (h *Handler) Browse(c *gin.Context) {
 	if err != nil {
 		h.logger.Printf("invalid location: %s - %v", locationStr, err)
 		c.HTML(http.StatusBadRequest, "browse.tmpl", gin.H{
-			"title": "Browse",
-			"error": "Invalid location format",
+			titleTemplateKey: browsePageTitle,
+			errorTemplateKey: "Invalid location format",
 		})
 		return
 	}
@@ -137,8 +144,8 @@ func (h *Handler) Browse(c *gin.Context) {
 	if err != nil {
 		h.logger.Printf("browse failed: %v", err)
 		c.HTML(http.StatusInternalServerError, "browse.tmpl", gin.H{
-			"title": "Browse",
-			"error": "Failed to load page",
+			titleTemplateKey: browsePageTitle,
+			errorTemplateKey: "Failed to load page",
 		})
 		return
 	}
@@ -153,7 +160,7 @@ func (h *Handler) Browse(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "browse.tmpl", gin.H{
-		"title":          "Page Content",
+		titleTemplateKey: "Page Content",
 		"location":       location,
 		"displayContent": displayContent,
 		"hasQuery":       query != "",
@@ -212,8 +219,8 @@ func (h *Handler) RandomPage(c *gin.Context) {
 	if err != nil {
 		h.logger.Printf("browse failed for random page: %v", err)
 		c.HTML(http.StatusInternalServerError, "browse.tmpl", gin.H{
-			"title": "Browse",
-			"error": "Failed to load random page",
+			titleTemplateKey: browsePageTitle,
+			errorTemplateKey: "Failed to load random page",
 		})
 		return
 	}
@@ -222,7 +229,7 @@ func (h *Handler) RandomPage(c *gin.Context) {
 	displayContent := template.HTML(html.EscapeString(formattedContent)) //nolint:gosec
 
 	c.HTML(http.StatusOK, "browse.tmpl", gin.H{
-		"title":          "Random Page",
+		titleTemplateKey: "Random Page",
 		"location":       location,
 		"displayContent": displayContent,
 		"nextLocation":   location.Next(),
